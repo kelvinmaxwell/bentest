@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="30dp"
+    android:id="@+id/frag1_layout"
+    android:background="#FFF"
+    android:orientation="vertical">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="504dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginBottom="-8dp"
+        android:orientation="vertical">
+
+        <Spinner
+
+            android:id="@+id/Spinner"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+
+
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="14dp"
+            android:layout_marginEnd="14dp"
+            android:layout_marginBottom="10dp"
+            android:paddingBottom="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/editText"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <AutoCompleteTextView
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="42dp"
+
+            android:layout_margin="14dp"
+            android:layout_marginBottom="10dp"
+            android:ems="10"
+            android:hint="Member name/Id"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/Spinner2"
+            tools:layout_editor_absoluteX="14dp" />
+
+        <requestFocus
+            android:layout_width="23dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="411dp"
+            android:layout_marginBottom="483dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Spinner
+            android:id="@+id/Spinner2"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="14dp"
+            android:layout_marginBottom="10dp"
+            android:paddingBottom="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/textView11"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="14dp"
+            android:layout_marginBottom="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="0dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            app:fontFamily="@font/mandali"
+            app:layout_constraintBottom_toTopOf="@+id/editText2"
+            tools:layout_editor_absoluteX="14dp" />
+
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="14dp"
+            android:layout_marginBottom="10dp"
+            android:ems="10"
+            android:hint="Amt Required"
+            android:inputType="number"
+            app:layout_constraintBottom_toTopOf="@+id/Spinner3"
+            tools:layout_editor_absoluteX="14dp" />
+
+        <Spinner
+            android:id="@+id/Spinner3"
+            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="14dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginBottom="95dp"
+            android:paddingBottom="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnTEST"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <Button
+
+            android:id="@+id/btnTEST"
+            android:layout_width="match_parent"
+            android:layout_height="53dp"
+
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="10dp"
+            android:drawableLeft="@drawable/undo"
+            android:text="Back"
+            android:theme="@style/Button2Style"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Spinner3" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</RelativeLayout>

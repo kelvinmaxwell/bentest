@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/groups"
+            android:title="Groups" />
+
+        <item
+            android:id="@+id/nav_members"
+            android:icon="@drawable/member"
+            android:title="Members" />
+
+        <item
+            android:id="@+id/nav_rates"
+            android:icon="@drawable/rates"
+            android:title="Rates" />
+
+        <item
+            android:id="@+id/nav_employees"
+            android:icon="@drawable/employees"
+            android:title="Employees" />
+
+
+        <item
+        android:id="@+id/nav_regions"
+        android:icon="@drawable/regions"
+        android:title="Regions" />
+
+
+        <item
+            android:id="@+id/nav_gallery"
+            android:icon="@drawable/gallery"
+            android:title="Gallery" />
+
+
+        <item
+            android:id="@+id/nav_reports"
+            android:icon="@drawable/reports"
+            android:title="Reports" />
+
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/nav_send"
+                android:icon="@drawable/ic_menu_send"
+                android:title="Send" />
+        </menu>
+    </item>
+
+</menu>
