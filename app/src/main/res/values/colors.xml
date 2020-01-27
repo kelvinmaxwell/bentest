@@ -8,4 +8,5 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="buttoncolour">#2B7A45</color>
+    <color name="textback">#272B6E7A</color>
 </resources>
