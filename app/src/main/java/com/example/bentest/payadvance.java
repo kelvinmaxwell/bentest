@@ -205,12 +205,12 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
 
                 Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
 
-                StringPassed = "SELECT  Ifnull( (sum( if( `transactiontype` = 'BORROW',(amount), 0 ) )-" +
-                        "sum( if(  `transactiontype` = 'PAYMENTS' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
+                StringPassed = "SELECT  Ifnull( (sum( if( `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE',(amount), 0 ) )-" +
+                        "sum( if(  `transactiontype` = 'PAYMENTS' AND `transactionoption`='ADVANCE' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
                         " Ifnull((select DATEDIFF(DATE_ADD(date, INTERVAL repaymentperiod MONTH),NOW()) FROM  " +
-                        " `advances` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' AND " +
-                        " transactiontype='BORROW' ORDER BY ref DESC LIMIT 1),0)" +
-                        " AS remainingdays FROM `advances` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' " +
+                        " `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' AND " +
+                        " transactiontype='BORROW' AND transactionoption='ADVANCES' ORDER BY ref DESC LIMIT 1),0)" +
+                        " AS remainingdays FROM `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' " +
                         " ORDER BY ref DESC LIMIT 1 " ;
 
                 HashMap postData = new HashMap();
@@ -337,7 +337,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
 
         }else if(SelectedModeOfDisbursement.equals("CASH")){
 
-            StringPassed = "insert into `advances`(`memberid`,`date`,`account`,`paymentmode`," +
+            StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                     "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`)" +
                     "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
                     SelectedModeOfDisbursement + "','','PAYMENTS','','" + savingamount.getText() + "')";
@@ -368,7 +368,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
                     public void onClick(DialogInterface dialog, int which) {
                         m_Text = input.getText().toString();
 
-                        StringPassed = "insert into `advances`(`memberid`,`date`,`account`,`paymentmode`," +
+                        StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                                 "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`)" +
                                 "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
                                 SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','','" + savingamount.getText() + "')";
@@ -397,7 +397,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
 
             }else{
 
-                StringPassed = "insert into `advances`(`memberid`,`date`,`account`,`paymentmode`," +
+                StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                         "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`)" +
                         "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
                         SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','','" + savingamount.getText() + "')";

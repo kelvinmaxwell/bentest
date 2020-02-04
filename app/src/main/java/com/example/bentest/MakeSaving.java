@@ -206,11 +206,12 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 
                 Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
 
-                StringPassed = "SELECT IFNULL( (SUM(IF(savings.`transactiontype` = 'SAVINGS' ,(savings.amount), 0))),0) " +
-                        "AS `totalsavings`,Ifnull(sum( if(  savings.`transactiontype` = 'SAVINGS'  AND YEAR(savings.date) =" +
-                        " YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(savings.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
-                        "(savings.amount),0)),0) as lastmonthsavings FROM `savings` LEFT JOIN advances on savings.memberid=" +
-                        " advances.memberid WHERE savings.`account`='SAVINGS'  AND  savings.`memberid`='"+Selectedmember+"'" ;
+                StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = 'SAVINGS' ,(transactions.amount), 0))),0)" +
+                        "                AS `totalsavings`,Ifnull(sum( if(  transactions.`transactiontype` = 'SAVINGS'  AND YEAR(transactions.date) =" +
+                        "                        YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
+                        "                        (transactions.amount),0)),0) as lastmonthsavings FROM `transactions` WHERE transactions.`account`='SAVINGS'  AND  transactions.`memberid`='1';" ;
+
+
 
                 HashMap postData = new HashMap();
                 postData.put("function", "query");
@@ -337,10 +338,10 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
         }else if(SelectedModeOfDisbursement.equals("CASH")){
 
 
-            StringPassed = "insert into `savings`(`memberid`,`date`,`account`,`paymentmode`," +
-                    "`transactionnumber`,`transactiontype`,`amount`)" +
-                    "VALUES('"+Selectedmember+"','"+currentDateandTime+"','SAVINGS','"+SelectedModeOfDisbursement+"'," +
-                    " '','SAVINGS','"+savingamount.getText()+"')";
+            StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
+                    "`transactionnumber`,`transactiontype`,`transactionoption`,`amount`)" +
+                    "VALUES('"+Selectedmember+"','"+currentDateandTime+"','SAVINGS','"+SelectedModeOfDisbursement+"','SAVINGS'," +
+                    " 'SAVINGS','SAVINGS','"+savingamount.getText()+"')";
 
 
             HashMap postData = new HashMap();
@@ -498,18 +499,17 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 
             try {
 
-                System.out.println(output);
+                System.out.println("maxi"+output);
                 JSONObject jsonObject = new JSONObject(output);
                 boolean success = jsonObject.getBoolean("success");
                 if (success) {
 
 
 
-                    StringPassed = "SELECT IFNULL( (SUM(IF(savings.`transactiontype` = 'SAVINGS' ,(savings.amount), 0))),0) " +
-                            "AS `totalsavings`,Ifnull(sum( if(  savings.`transactiontype` = 'SAVINGS'  AND YEAR(savings.date) =" +
-                            " YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(savings.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
-                            "(savings.amount),0)),0) as lastmonthsavings FROM `savings` LEFT JOIN advances on savings.memberid=" +
-                            " advances.memberid WHERE savings.`account`='SAVINGS'  AND  savings.`memberid`='"+Selectedmember+"'" ;
+                    StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = 'SAVINGS' ,(transactions.amount), 0))),0) " +
+                            "AS `totalsavings`,Ifnull(sum( if(transactions.`transactiontype` = 'SAVINGS'  AND YEAR(transactions.date) =" +
+                            " YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
+                            "(transactions.amount),0)),0) as lastmonthsavings FROM `transactions`  WHERE transactions.`account`='SAVINGS'  AND  transactions.`memberid`='"+Selectedmember+"'" ;
 
                     HashMap postData = new HashMap();
                     postData.put("function", "query");

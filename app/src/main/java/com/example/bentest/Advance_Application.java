@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
@@ -413,10 +414,10 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
 
         }else if(SelectedModeOfDisbursement.equals("CASH")){
 
-            StringPassed = "insert into `advances`(`memberid`,`date`,`account`,`paymentmode`," +
-                    "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`)" +
+            StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
+                    "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`amount`)" +
                     "VALUES('"  +Selectedmember+ "','" + currentDateandTime + "','SAVINGS','" +
-                    SelectedModeOfDisbursement + "','','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "')";
+                    SelectedModeOfDisbursement + "','','BORROW','ADVANCE','"+repaymentperiod+"','" + AmountRequested.getText() + "')";
 
             HashMap postData = new HashMap();
             postData.put("function", "action");
@@ -567,12 +568,12 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                         }else{
 
 
-                            StringPassed = "SELECT (SELECT IFNULL((SUM(IF(savings.`transactiontype` = 'SAVINGS',(savings.amount), 0))),0)" +
-                                    "FROM savings WHERE savings.`account`='SAVINGS' AND memberid='"+Selectedmember+"') AS `totalsavings`, " +
-                                    "IFNULL(((SELECT (SUM(IF(savings.`transactiontype` = 'SAVINGS',(savings.amount), 0)))" +
-                                    "FROM savings WHERE savings.`account`='SAVINGS' AND memberid='"+Selectedmember+"') *2)- " +
+                            StringPassed = "SELECT (SELECT IFNULL((SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0))),0)" +
+                                    "FROM transactions WHERE transactions.`account`='SAVINGS' AND memberid='"+Selectedmember+"') AS `totalsavings`, " +
+                                    "IFNULL(((SELECT (SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0)))" +
+                                    "FROM transactions WHERE transactions.`account`='SAVINGS' AND memberid='"+Selectedmember+"') *2)- " +
                                     " ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
-                                    "(SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM advances WHERE `account`='SAVINGS' " +
+                                    "(SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='SAVINGS' " +
                                     " AND memberid='"+Selectedmember+"')),0) AS availableforfortakingadvance" ;
 
                             HashMap postData = new HashMap();
@@ -629,6 +630,9 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
 
 
                         available.setText(contenavailable);
+                       int maxamountrequested=jsonChildNode.getInt("availableforfortakingadvance");
+
+                        AmountRequested.setFilters(new InputFilter[]{ new MinMaxFilter("1",Integer.toString(maxamountrequested) )});
 
                     }
 

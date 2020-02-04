@@ -295,8 +295,9 @@ public class Tab1Fragment extends Fragment {
 
                     memid = autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "");
                     String function = "query";
-                    String sql = "SELECT ifnull(sum( if(  `transactionoption` = 'SAVINGS',(amount), 0 ) ),0) AS `totalsavings` " +
-                            " FROM `transactions` WHERE `account`='"+Spinner2.getItemAtPosition(position).toString()+"' and `memberid` = '"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
+                    String sql = "SELECT ifnull(sum( if(  `transactiontype` = 'SAVINGS',(amount), 0 ) ),0) AS `totalsavings` FROM `transactions` WHERE `transactiontype`='"+Spinner2.getItemAtPosition(position).toString()+"' and `memberid`='"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
+
+
                     System.out.println(sql);
                     ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                     RequestQueue requestQueue = Volley.newRequestQueue(getContext());
