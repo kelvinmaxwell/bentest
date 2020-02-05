@@ -2,6 +2,7 @@ package com.example.bentest;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,14 +24,19 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.kosalgeek.asynctask.AsyncResponse;
 import com.kosalgeek.asynctask.PostResponseAsyncTask;
 
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DecimalFormat;
@@ -218,6 +224,81 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
+//get advancebalance
+
+
+
+                StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //  Log.d(TAG,response);
+                        System.out.println(response);
+                        try {
+                            System.out.println(response);
+                            JSONObject jsonObject = new JSONObject(response);
+                            System.out.println(response);
+                            boolean success = jsonObject.getBoolean("status");
+                            if (success) {
+                                //set this to the spinner
+
+                                JSONArray jsonMainNode = jsonObject.optJSONArray("data");
+                                for (int i = 0; i < jsonMainNode.length(); i++) {
+                                    JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+
+
+
+                                    if(jsonChildNode.getInt("advancebalance")>0){
+
+                                        totalsavings.setVisibility(View.INVISIBLE);
+                                        available.setVisibility(View.INVISIBLE);
+                                           bbulder();
+
+
+
+                                    }
+                                }
+
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Advance_Application.this);
+                                builder.setMessage("Could not load groups").setNegativeButton("Retry", null).create().show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), "Error while reading nertwork", Toast.LENGTH_SHORT).show();
+
+                    }
+                }) {
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String> params = new HashMap<String, String>();
+
+
+                     String sql="SELECT  Ifnull( (sum( if( `transactiontype` = 'BORROW',(amount), 0 ) )-\n" +
+                             "                           sum( if(  `transactiontype` = 'PAYMENTS' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`\n" +
+                             "                 FROM \n" +
+                             "                            `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' \n" +
+                             "                            \n" +
+                             "                            ORDER BY ref DESC LIMIT 1";
+
+
+
+
+
+                        params.put("function", "getadvancebalances");
+                        params.put("sql",sql);
+
+
+
+                        return params;
+                    }
+                };
+                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
 
 
@@ -693,6 +774,20 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
 
 
     }
+
+    public  void bbulder(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Advance_Application.this);
+        builder.setMessage("Member not eligible to an Advance du to an outstanding advance balance!").setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Advance_Application.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }).create().show();
+
+    }
+
 
 
 

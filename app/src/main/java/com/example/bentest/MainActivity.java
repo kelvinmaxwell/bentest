@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -24,8 +26,12 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 //import com.example.ses.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -44,7 +50,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-
+TextView loanstxt;
     QuickAction mLoans;
     Spinner spinner;
     ArrayList<String> Members = new ArrayList<>();
@@ -58,7 +64,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+loanstxt=findViewById(R.id.loans);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -103,7 +109,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(int pos) {
                 if(pos==0){
+
+
                     Intent intent = new Intent(MainActivity.this, LoanApplicationForm.class);
+
+
+
                     startActivity(intent);
                 }else  if(pos==1){
                     final AlertDialog dialogBuilder = new AlertDialog.Builder(MainActivity.this).create();
@@ -147,6 +158,16 @@ public class MainActivity extends AppCompatActivity
 
                                                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.simple_list_item_1, Members);
                                                 autoCompleteTextView.setAdapter(adapter);
+                                                autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                        String name=parent.getItemAtPosition(position).toString();
+                                                        Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
+                                                        SessionManager sessionManager=new SessionManager(getApplicationContext());
+
+                                                        sessionManager.createSession(name,name,name,name);
+                                                    }
+                                                });
 
 
                                             }
@@ -161,7 +182,7 @@ public class MainActivity extends AppCompatActivity
                                 String function = "query";
                                 String sql = "select memberid, `id number`, concat(firstname,' ',secondname,' ',surname) as name from members where `group` = '"+selectedItemText.replaceAll("[^\\d]", "") +"'";
                                 System.out.println(sql);
-                                ActionRequest driverLoginRequest = new ActionRequest("dboperations.php", function, sql, responseListener1);
+                                ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                                 RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
                                 requestQueue.add(driverLoginRequest);
                             }
@@ -187,7 +208,10 @@ public class MainActivity extends AppCompatActivity
                         public void onClick(View view) {
                             // DO SOMETHINGS
 
-                            Intent intent = new Intent(MainActivity.this, LoanRepayment.class);
+// set Fragmentclass Arguments
+ Intent intent = new Intent(MainActivity.this, LoanRepayment.class);
+
+                            intent.putExtra("name1","name1");
                             startActivity(intent);
                             dialogBuilder.dismiss();
                         }
@@ -376,4 +400,8 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+
+
 }

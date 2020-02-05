@@ -112,14 +112,20 @@ public class Tab1Fragment extends Fragment {
                                     if(jsonChildNode.getInt("advance")>0){
 
                                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                        builder.setMessage("Member not eligible to a loan due to an outstanding advance balance!").setPositiveButton("Okay", null).create().show();
+                                        builder.setMessage("Member not eligible to a loan due to an outstanding advance balance!").setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = new Intent(getContext(), MainActivity.class);
+                                                startActivity(intent);
 
-                                        etamount.setText("");
+                                            }
+                                        }).create().show();
+
+                                         etamount.setText("");
                                         autoCompleteTextView.setText("");
                                         etamount.setText("");
 
-                                        Intent intent = new Intent(getContext(), MainActivity.class);
-                                        startActivity(intent);
+
                                     }
 
                                 }
@@ -139,8 +145,8 @@ public class Tab1Fragment extends Fragment {
 
                 memid = autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "");
                 String function = "query";
-                String sql = "SELECT ifnull(sum( if( `transactionoption` = 'ADVANCE' AND `transactiontype` = 'ADVANCE' ,(amount), 0 )" +
-                        " - if(  `transactionoption` = 'ADVANCE' AND `transactiontype` = 'PAYMENT' ,(amount), 0 ) ),0) AS `advance` " +
+                String sql = "SELECT ifnull(sum( if( `transactionoption` = 'ADVANCE' AND `transactiontype` = 'BORROW' ,(amount), 0 )" +
+                        " - if(  `transactionoption` = 'ADVANCE' AND `transactiontype` = 'PAYMENTS' ,(amount), 0 ) ),0) AS `advance` " +
                         " FROM `transactions` WHERE `account`='SAVINGS' and " +
                         " `memberid` = '"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
                 System.out.println(sql);
@@ -276,7 +282,7 @@ public class Tab1Fragment extends Fragment {
 
                                         textView.setText("Available: KES "+
                                                 new DecimalFormat("#,###.##").
-                                                        format(jsonChildNode.getDouble("totalsavings")));
+                                                        format(jsonChildNode.getDouble("totalsavings")*3));
 
                                     }
 

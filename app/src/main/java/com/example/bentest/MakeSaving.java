@@ -90,7 +90,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
         PostResponseAsyncTask loginTask =
                 new PostResponseAsyncTask(MakeSaving.this, postData,
                         MakeSaving.this);
-        loginTask.execute(URL + "dboperations.php");
+        loginTask.execute(getString(R.string.url));
 
 
 
@@ -221,7 +221,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
                 PostResponseAsyncTask loginTask =
                         new PostResponseAsyncTask(MakeSaving.this, postData,
                                 MakeSaving.this);
-                loginTask.execute(URL + "dboperations.php");
+                loginTask.execute(getString(R.string.url));
 
             }
         });
@@ -352,7 +352,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
             PostResponseAsyncTask loginTask =
                     new PostResponseAsyncTask(MakeSaving.this, postData,
                             MakeSaving.this);
-            loginTask.execute(URL + "dboperations.php");
+            loginTask.execute(getString(R.string.url));
 
         }else {
 
@@ -384,7 +384,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
                         PostResponseAsyncTask loginTask =
                                 new PostResponseAsyncTask(MakeSaving.this, postData,
                                         MakeSaving.this);
-                        loginTask.execute(URL + "dboperations.php");
+                        loginTask.execute(getString(R.string.url));
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -413,7 +413,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
                 PostResponseAsyncTask loginTask =
                         new PostResponseAsyncTask(MakeSaving.this, postData,
                                 MakeSaving.this);
-                loginTask.execute(URL + "dboperations.php");
+                loginTask.execute(getString(R.string.url));
 
             }
 
@@ -522,7 +522,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
                     PostResponseAsyncTask loginTask =
                             new PostResponseAsyncTask(MakeSaving.this, postData,
                                     MakeSaving.this);
-                    loginTask.execute(URL + "dbqueries.php");
+                    loginTask.execute(getString(R.string.url));
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Transaction saved successfully !")

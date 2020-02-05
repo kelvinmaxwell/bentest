@@ -84,7 +84,7 @@
             app:fontFamily="sans-serif-light" />
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/Amount_repaid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -105,7 +105,7 @@
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/submitloanpayment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

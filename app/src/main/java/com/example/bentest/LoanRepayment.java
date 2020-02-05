@@ -1,6 +1,7 @@
 package com.example.bentest;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 
 
@@ -46,6 +47,7 @@ public class LoanRepayment extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
+
     }
 
 
@@ -62,6 +64,8 @@ public class LoanRepayment extends AppCompatActivity {
         adapter.addFrag(new CollateralFragment(), "Collateral");
         viewPager.setAdapter(adapter);
     }
+
+
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
