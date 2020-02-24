@@ -32,6 +32,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -48,20 +49,22 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
     };
 
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     String currentDateandTime = sdf.format(new Date());
 
     TextView totalsaving;
     TextView lastmonthsaving;
     ArrayList<String> Members = new ArrayList<>();
-
+    ArrayAdapter<CharSequence>adapter;
     EditText savingamount;
     AutoCompleteTextView autoCompleteTextView;
+    EditText advanceid;
     String Selectedmember = "";
     String StringPassed = "";
     String function = "";
     String excecutingcategory = "";
-    private android.widget.Spinner Spinner;
+    private android.widget.Spinner Spinner,choosemodespn,chooseaccounts;
+
     ActionRequest driverLoginRequest;
     RequestQueue requestQueue;
     String m_Text = "";
@@ -77,11 +80,43 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payadvance);
 
-
+chooseaccounts=findViewById(R.id.chooseaccountspn);
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
         Spinnerdisbursementmode=(android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
-
+        choosemodespn=findViewById(R.id.spinnerpay);
         MemberGroups.add("Select Group");
+advanceid=findViewById(R.id.loanid);
+
+accountselectspinner();
+
+
+
+//        ((EditText)findViewById(R.id.savingamount)).addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                if(s != null && s.length() > 0 && s.charAt(s.length() - 1) == ' '){
+//
+//
+//                    //newavbal.setText(""+totalsavingstoadd+Double.parseDouble(s.toString()));
+//
+//
+//                }
+//            }
+//        });
+
+    }
+
+    public  void savings(){
 
         HashMap postData = new HashMap();
         postData.put("function", "query");
@@ -92,7 +127,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
         PostResponseAsyncTask loginTask =
                 new PostResponseAsyncTask(payadvance.this, postData,
                         payadvance.this);
-        loginTask.execute(URL + "dboperations.php");
+        loginTask.execute(getString(R.string.url));
 
 
 
@@ -173,7 +208,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
                         }
                     };
                     function = "query";
-                    driverLoginRequest = new ActionRequest("dboperations.php", function, StringPassed, responseListener1);
+                    driverLoginRequest = new ActionRequest("dbqueries.php", function, StringPassed, responseListener1);
                     requestQueue = Volley.newRequestQueue(getApplicationContext());
                     requestQueue.add(driverLoginRequest);
                 }
@@ -192,7 +227,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
         totalsaving= (TextView) findViewById(R.id.totalsaving);
         lastmonthsaving= (TextView) findViewById(R.id.lastmonthsaving);
 
-        savingamount= (EditText) findViewById(R.id.savingamount);
+        savingamount= (EditText) findViewById(R.id.choosemode);
 
         autoCompleteTextView = (AutoCompleteTextView) findViewById(R.id.Membernu);
         autoCompleteTextView.setEnabled(false);
@@ -205,12 +240,12 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
 
                 Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
 
-                StringPassed = "SELECT  Ifnull( (sum( if( `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE',(amount), 0 ) )-" +
-                        "sum( if(  `transactiontype` = 'PAYMENTS' AND `transactionoption`='ADVANCE' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
+                StringPassed = "SELECT advance_id, Ifnull( (sum( if( `transactiontype` = 'BORROW' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"' and `transactionoption`='ADVANCE' and status='Active' ,(amount), 0 ) )-" +
+                        "sum( if(  `transactiontype` = 'PAYMENTS' AND `transactionoption`='ADVANCE' and `account`='"+chooseaccounts.getSelectedItem().toString()+"' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
                         " Ifnull((select DATEDIFF(DATE_ADD(date, INTERVAL repaymentperiod MONTH),NOW()) FROM  " +
-                        " `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' AND " +
+                        " `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND " +
                         " transactiontype='BORROW' AND transactionoption='ADVANCES' ORDER BY ref DESC LIMIT 1),0)" +
-                        " AS remainingdays FROM `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' " +
+                        " AS remainingdays FROM `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' and `status`='Active' " +
                         " ORDER BY ref DESC LIMIT 1 " ;
 
                 HashMap postData = new HashMap();
@@ -221,7 +256,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
                 PostResponseAsyncTask loginTask =
                         new PostResponseAsyncTask(payadvance.this, postData,
                                 payadvance.this);
-                loginTask.execute(URL + "dboperations.php");
+                loginTask.execute(getString(R.string.url));
 
             }
         });
@@ -281,31 +316,6 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
         });
 
 
-
-
-//        ((EditText)findViewById(R.id.savingamount)).addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//                if(s != null && s.length() > 0 && s.charAt(s.length() - 1) == ' '){
-//
-//
-//                    //newavbal.setText(""+totalsavingstoadd+Double.parseDouble(s.toString()));
-//
-//
-//                }
-//            }
-//        });
-
     }
 
     @Override
@@ -337,20 +347,22 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
 
         }else if(SelectedModeOfDisbursement.equals("CASH")){
 
-            StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                    "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`amount`)" +
-                    "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
-                    SelectedModeOfDisbursement + "','','PAYMENTS','ADVANCE','','" + savingamount.getText() + "')";
+           String sql1 = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
+                    "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`next_repayment`,`amount`,`advance_id`,`status`,`Action`)" +
+                    "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
+                    SelectedModeOfDisbursement + "','','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid.getText().toString() + "','Active','Pending')";
 
+            String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE'" ;
             HashMap postData = new HashMap();
-            postData.put("function", "action");
-            postData.put("StringPassed", StringPassed);
+            postData.put("function", "transactions");
+            postData.put("sql1", sql1);
+            postData.put("sql2", sql2);
             excecutingcategory="savepayadvance";
 
             PostResponseAsyncTask loginTask =
                     new PostResponseAsyncTask(payadvance.this, postData,
                             payadvance.this);
-            loginTask.execute(URL + "dboperations.php");
+            loginTask.execute(getString(R.string.url));
 
         }else {
 
@@ -369,20 +381,22 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
                         m_Text = input.getText().toString();
 
                         StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                                "`transactionnumber`,`transactiontype`,``transactionoption`,repaymentperiod`,`amount`)" +
-                                "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
-                                SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','" + savingamount.getText() + "')";
+                                "`transactionnumber`,`transactiontype`,``transactionoption`,repaymentperiod`,`next_repayment`,`amount`,`advance_id`,`status`,`Action`)" +
+                                "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
+                                SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid.getText().toString() + "','Active','pending')";
 
 
+                        String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"' ";
                         HashMap postData = new HashMap();
-                        postData.put("function", "action");
-                        postData.put("StringPassed", StringPassed);
+                        postData.put("function", "transactions");
+                        postData.put("sql1", StringPassed);
+                        postData.put("sql2", sql2);
                         excecutingcategory="savepayadvance";
 
                         PostResponseAsyncTask loginTask =
                                 new PostResponseAsyncTask(payadvance.this, postData,
                                         payadvance.this);
-                        loginTask.execute(URL + "dboperations.php");
+                        loginTask.execute(getString(R.string.url));
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -397,21 +411,28 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
 
             }else{
 
+
+                Calendar cal = Calendar.getInstance();
+                cal.add(Calendar.MONTH, 1);
+
+
+
                 StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                        "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`amount`)" +
-                        "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
-                        SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','" + savingamount.getText() + "')";
-
-
+                        "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`next_repayment`,`amount`,`advance_id`,`status`,`Action`)" +
+                        "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
+                        SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid.getText().toString() + "','Active','Pending')";
+                String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE' and account='"+chooseaccounts.getSelectedItem().toString()+"'" ;
                 HashMap postData = new HashMap();
-                postData.put("function", "action");
-                postData.put("StringPassed", StringPassed);
+                postData.put("function", "transactions");
+                postData.put("sql1", StringPassed);
+                postData.put("sql2", sql2);
+
                 excecutingcategory="savepayadvance";
 
                 PostResponseAsyncTask loginTask =
                         new PostResponseAsyncTask(payadvance.this, postData,
                                 payadvance.this);
-                loginTask.execute(URL + "dboperations.php");
+                loginTask.execute(getString(R.string.url));
 
             }
 
@@ -473,9 +494,12 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
                                 format(jsonChildNode.getDouble("advancebalance")));
                         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
                         totalsaving.setText(content);
+                     Double chosenoperation=  jsonChildNode.getDouble("advancebalance");
+                      spinner3(chosenoperation);
 
                         SpannableString remainingdys = new SpannableString(jsonChildNode.getString("remainingdays")+" Days ");
                         lastmonthsaving.setText(remainingdys);
+                        advanceid.setText(jsonChildNode.getString("advance_id"));
 
                     }
 
@@ -495,20 +519,21 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
         else if (excecutingcategory.equals("savepayadvance")) {
 
             try {
-
+                System.out.println(output);
 
                 JSONObject jsonObject = new JSONObject(output);
                 boolean success = jsonObject.getBoolean("success");
                 if (success) {
 
 
-                    StringPassed = "SELECT  Ifnull( (sum( if( `transactiontype` = 'BORROW',(amount), 0 ) )-" +
-                            "sum( if(  `transactiontype` = 'PAYMENTS' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
+                    StringPassed ="SELECT advance_id, Ifnull( (sum( if( `transactiontype` = 'BORROW'  AND `account`='"+chooseaccounts.getSelectedItem().toString()+"'AND  `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) )-" +
+                            "sum( if(  `transactiontype` = 'PAYMENTS' AND `transactionoption`='ADVANCE' and `account`='"+chooseaccounts.getSelectedItem().toString()+"' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
                             " Ifnull((select DATEDIFF(DATE_ADD(date, INTERVAL repaymentperiod MONTH),NOW()) FROM  " +
-                            " `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' AND " +
-                            " transactiontype='BORROW' ORDER BY ref DESC LIMIT 1),0)" +
-                            " AS remainingdays FROM `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' " +
+                            " `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND " +
+                            " transactiontype='BORROW' AND transactionoption='ADVANCES' ORDER BY ref DESC LIMIT 1),0)" +
+                            " AS remainingdays FROM `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' and `status`='Active' " +
                             " ORDER BY ref DESC LIMIT 1 " ;
+
 
                     HashMap postData = new HashMap();
                     postData.put("function", "query");
@@ -520,7 +545,7 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
                     PostResponseAsyncTask loginTask =
                             new PostResponseAsyncTask(payadvance.this, postData,
                                     payadvance.this);
-                    loginTask.execute(URL + "dboperations.php");
+                    loginTask.execute(getString(R.string.url));
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setMessage("Transaction saved successfully !")
@@ -537,4 +562,76 @@ public class payadvance extends AppCompatActivity implements AsyncResponse, Adap
         }
 
     }
+
+    public void spinner3(final Double advance){
+        adapter= ArrayAdapter.createFromResource(this,R.array.advance_action,android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        choosemodespn.setAdapter(adapter);
+        choosemodespn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+
+                if(parent.getItemAtPosition(position).toString().equalsIgnoreCase("Pay Intrest for two mothns then clear amountin 3rd month")){
+                    savingamount.setText(Double.toString(advance*0.1));
+                }
+
+                else if(parent.getItemAtPosition(position).toString().equalsIgnoreCase("pay within a month with intrest of that month")){
+                    savingamount.setText(Double.toString((advance*0.1)+advance));
+                }
+                else if(parent.getItemAtPosition(position).toString().equalsIgnoreCase("pay intrest while redusing your debt")){
+                    savingamount.setText(Double.toString(advance));
+                }
+                else savingamount.setText("");
+                }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+
+public String adddates(int duration){
+        Date date = new Date();
+        SimpleDateFormat df  = new SimpleDateFormat("YYYY-MM-dd");
+        Calendar c1 = Calendar.getInstance();
+        String currentDate = df.format(date);// get current date here
+        //   Toast.makeText(this, currentDate, Toast.LENGTH_SHORT).show();
+
+        // now add 30 day in Calendar instance
+        c1.add(Calendar.MONTH, duration);
+        df = new SimpleDateFormat("yyyy-MM-dd");
+        Date resultDate = c1.getTime();
+        String     dueDate = df.format(resultDate);
+        Toast.makeText(this, dueDate, Toast.LENGTH_LONG).show();
+        return dueDate;
+    }
+
+    public void accountselectspinner(){
+        adapter= ArrayAdapter.createFromResource(this,R.array.accaounts,android.R.layout.simple_spinner_item); adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        chooseaccounts.setAdapter(adapter);
+        chooseaccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+                if (!parent.getItemAtPosition(position).toString().equalsIgnoreCase("Please select accounts..............")) {
+                    savings();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+    }
+
+
 }

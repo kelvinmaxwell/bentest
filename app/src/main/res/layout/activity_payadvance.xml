@@ -44,12 +44,28 @@
 
 
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/chooseaccountspn"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="80dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:hint="@string/select_group"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="150dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:hint="@string/select_group"
@@ -155,6 +171,20 @@
             app:layout_constraintTop_toBottomOf="@+id/lNameLayoutguarantor" />
 
     </com.google.android.material.textfield.TextInputLayout>
+    <Spinner
+        android:id="@+id/spinnerpay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:ems="10"
+        android:hint="Payment Amount"
+        android:inputType="textPersonName"
+
+        app:layout_constraintTop_toBottomOf="@+id/lNameLayouttotasavings" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lNameLayoutAvailable"
@@ -164,11 +194,11 @@
         android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lNameLayouttotasavings">
+        app:layout_constraintTop_toBottomOf="@+id/spinnerpay">
 
 
         <EditText
-            android:id="@+id/savingamount"
+            android:id="@+id/choosemode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
@@ -205,7 +235,7 @@
         android:layout_height="51dp"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:drawableLeft="@drawable/processloan"
@@ -226,7 +256,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:drawableLeft="@drawable/undo"
@@ -238,6 +268,18 @@
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Spinnerdisbursementmode" />
+
+    <EditText
+        android:id="@+id/loanid"
+        android:layout_width="428dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="109dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

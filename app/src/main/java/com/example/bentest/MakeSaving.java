@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MakeSaving extends AppCompatActivity implements AsyncResponse, AdapterView.OnItemClickListener, View.OnClickListener {
-
+    ArrayAdapter<CharSequence>adapter;
 
     private static final String URL = "http://192.168.43.78/www/html/seskenya/";
     String Paymntsmode[] = {
@@ -65,7 +65,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
     String m_Text = "";
     String SelectedModeOfDisbursement = "";
 
-    private android.widget.Spinner Spinnerdisbursementmode;
+    private android.widget.Spinner Spinnerdisbursementmode,chooseaccounts;
     ArrayList<String> MemberGroups = new ArrayList<>();
 
 
@@ -75,27 +75,59 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_makesaving);
 
-
+chooseaccounts=findViewById(R.id.chooseaccountspn);
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
-        Spinnerdisbursementmode=(android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
-
-        MemberGroups.add("Select Group");
-
-        HashMap postData = new HashMap();
-        postData.put("function", "query");
-        postData.put("StringPassed", "select name from groups");
-        excecutingcategory = "MemberGroups";
+        Spinnerdisbursementmode = (android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
+accountselectspinner();
 
 
-        PostResponseAsyncTask loginTask =
-                new PostResponseAsyncTask(MakeSaving.this, postData,
+    }
+
+    public void accountselectspinner(){
+        adapter= ArrayAdapter.createFromResource(this,R.array.accaounts,android.R.layout.simple_spinner_item); adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        chooseaccounts.setAdapter(adapter);
+        chooseaccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+                if (!parent.getItemAtPosition(position).toString().equalsIgnoreCase("Please select accounts..............")) {
+                    savings();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+    }
+
+
+    public void savings(){
+
+
+                              MemberGroups.add("Select Group");
+
+                          HashMap postData = new HashMap();
+                                postData.put("function", "query");
+                                 postData.put("StringPassed", "select name from groups");
+                              excecutingcategory = "MemberGroups";
+
+
+                     PostResponseAsyncTask loginTask =
+                             new PostResponseAsyncTask(MakeSaving.this, postData,
                         MakeSaving.this);
-        loginTask.execute(getString(R.string.url));
+                                 loginTask.execute(getString(R.string.url));
 
 
 
 
         // Initializing an ArrayAdapter
+
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 getApplicationContext(), R.layout.spinner_item, MemberGroups) {
             @Override
@@ -206,10 +238,11 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 
                 Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
 
-                StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = 'SAVINGS' ,(transactions.amount), 0))),0)" +
-                        "                AS `totalsavings`,Ifnull(sum( if(  transactions.`transactiontype` = 'SAVINGS'  AND YEAR(transactions.date) =" +
+                StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"' ,(transactions.amount), 0))),0)" +
+                        "                AS `totalsavings`,Ifnull(sum( if(  transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"' " +
+                        " AND YEAR(transactions.date) =" +
                         "                        YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
-                        "                        (transactions.amount),0)),0) as lastmonthsavings FROM `transactions` WHERE transactions.`account`='SAVINGS'  AND  transactions.`memberid`='1';" ;
+                        "                        (transactions.amount),0)),0) as lastmonthsavings FROM `transactions` WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"'  AND  transactions.`memberid`='"+Selectedmember+"';" ;
 
 
 
@@ -306,6 +339,18 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 //            }
 //        });
 
+
+    }
+
+
+
+
+    public void advances(){
+
+
+
+
+
     }
 
     @Override
@@ -323,13 +368,21 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 
     public void SaveSavings(View view) {
 
-        if(savingamount.getText().toString().isEmpty()){
+        if(savingamount.getText().toString().isEmpty()) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Please Provide Savings amount !")
-                    .setNegativeButton("Cancel",null).create().show();
+                    .setNegativeButton("Cancel", null).create().show();
+        }
+            else if(chooseaccounts.getSelectedItem().toString().equalsIgnoreCase("ADVANCE")){
+                if(Integer.parseInt(savingamount.getText().toString())<50){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("you cannot save less than 50 shs")
+                            .setNegativeButton("Cancel",null).create().show();
+                }
+            }
 
-        }else if(SelectedModeOfDisbursement.isEmpty()){
+        else if(SelectedModeOfDisbursement.isEmpty()){
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("Please select mode of disbursement !")
@@ -340,8 +393,8 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 
             StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                     "`transactionnumber`,`transactiontype`,`transactionoption`,`amount`)" +
-                    "VALUES('"+Selectedmember+"','"+currentDateandTime+"','SAVINGS','"+SelectedModeOfDisbursement+"','SAVINGS'," +
-                    " 'SAVINGS','SAVINGS','"+savingamount.getText()+"')";
+                    "VALUES('"+Selectedmember+"','"+currentDateandTime+"','"+chooseaccounts.getSelectedItem().toString()+"','"+SelectedModeOfDisbursement+"','"+chooseaccounts.getSelectedItem().toString()+"'," +
+                    " '"+chooseaccounts.getSelectedItem().toString()+"','"+chooseaccounts.getSelectedItem().toString()+"','"+savingamount.getText()+"')";
 
 
             HashMap postData = new HashMap();
@@ -370,10 +423,10 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
                     public void onClick(DialogInterface dialog, int which) {
                         m_Text = input.getText().toString();
 
-                        StringPassed = "insert into `savings`(`memberid`,`date`,`account`,`paymentmode`," +
+                        StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                                 "`transactionnumber`,`transactiontype`,`amount`)" +
-                                "VALUES('"+Selectedmember+"','"+currentDateandTime+"','SAVINGS','"+SelectedModeOfDisbursement+"'," +
-                                "'"+ m_Text +"','SAVINGS','"+savingamount.getText()+"')";
+                                "VALUES('"+Selectedmember+"','"+currentDateandTime+"','"+chooseaccounts.getSelectedItem().toString()+"','"+SelectedModeOfDisbursement+"'," +
+                                "'"+ m_Text +"','"+chooseaccounts.getSelectedItem().toString()+"','"+savingamount.getText()+"')";
 
 
                         HashMap postData = new HashMap();
@@ -399,10 +452,10 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 
             }else{
 
-                StringPassed = "insert into `savings`(`memberid`,`date`,`account`,`paymentmode`," +
+                StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                         "`transactionnumber`,`transactiontype`,`amount`)" +
-                        "VALUES('"+Selectedmember+"','"+currentDateandTime+"','SAVINGS','"+SelectedModeOfDisbursement+"'," +
-                        "'"+ m_Text +"','SAVINGS','"+savingamount.getText()+"')";
+                        "VALUES('"+Selectedmember+"','"+currentDateandTime+"','"+chooseaccounts.getSelectedItem().toString()+"','"+SelectedModeOfDisbursement+"'," +
+                        "'"+ m_Text +"','"+chooseaccounts.getSelectedItem().toString()+"','"+savingamount.getText()+"')";
 
 
                 HashMap postData = new HashMap();
@@ -506,10 +559,10 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 
 
 
-                    StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = 'SAVINGS' ,(transactions.amount), 0))),0) " +
-                            "AS `totalsavings`,Ifnull(sum( if(transactions.`transactiontype` = 'SAVINGS'  AND YEAR(transactions.date) =" +
+                    StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"' ,(transactions.amount), 0))),0) " +
+                            "AS `totalsavings`,Ifnull(sum( if(transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"'  AND YEAR(transactions.date) =" +
                             " YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
-                            "(transactions.amount),0)),0) as lastmonthsavings FROM `transactions`  WHERE transactions.`account`='SAVINGS'  AND  transactions.`memberid`='"+Selectedmember+"'" ;
+                            "(transactions.amount),0)),0) as lastmonthsavings FROM `transactions`  WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"'  AND  transactions.`memberid`='"+Selectedmember+"'" ;
 
                     HashMap postData = new HashMap();
                     postData.put("function", "query");

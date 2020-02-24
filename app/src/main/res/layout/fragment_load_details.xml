@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.ses.LoadDetails" >
+    tools:context="com.example.bentest.LoadDetails" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -91,9 +91,17 @@
             android:ems="10"
             android:hint="@string/amount_repaid"
             android:inputType="number" />
+        <EditText
+            android:id="@+id/next_repayemnt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:hint="date of next meeting"
+            android:inputType="date" />
 
         <TextView
-            android:id="@+id/textView18"
+            android:id="@+id/amountdue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

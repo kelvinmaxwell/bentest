@@ -161,4 +161,18 @@
     <string name="url">http://192.168.43.78/www/html/seskenya/dbqueries.php</string>
 
 
+    <string-array name="advance_action">
+        <item>Pay Intrest for two mothns then clear amountin 3rd month</item>
+        <item>pay within a month with intrest of that month</item>
+        <item>pay intrest while redusing your debt</item>
+    </string-array>
+
+    <string-array name="accaounts">
+        <item>Please select accounts..............</item>
+        <item>SAVINGS</item>
+        <item>EDUCATION</item>
+
+    </string-array>
+
+
 </resources>

@@ -50,7 +50,7 @@ import java.util.Map;
 
 public class Advance_Application extends AppCompatActivity implements AsyncResponse, AdapterView.OnItemClickListener, View.OnClickListener {
 
-
+    ArrayAdapter<CharSequence>adapter;
     private JSONArray result;
     private Map<java.lang.String, java.lang.String> params;
 
@@ -72,7 +72,7 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
     java.lang.String SelectedModeOfDisbursement = "";
 
     private android.widget.Spinner Spinner;
-    private android.widget.Spinner Spinnerdisbursementmode;
+    private android.widget.Spinner Spinnerdisbursementmode,chooseaccounts;
     private android.widget.Spinner Spinnerrepaymentperiod;
 
     java.lang.String Paymntsmode[] = {
@@ -104,6 +104,48 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
         Spinnerdisbursementmode=(android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
 
+        chooseaccounts=findViewById(R.id.chooseaccountspn);
+        Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
+        Spinnerdisbursementmode = (android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
+        accountselectspinner();
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+    public void accountselectspinner(){
+        adapter= ArrayAdapter.createFromResource(this,R.array.accaounts,android.R.layout.simple_spinner_item); adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        chooseaccounts.setAdapter(adapter);
+        chooseaccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+
+                if (!parent.getItemAtPosition(position).toString().equalsIgnoreCase("Please select accounts..............")) {
+                    savings();
+                }
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+    }
+
+
+    public void savings(){
         MemberGroups.add("Select Group");
 
         HashMap postData = new HashMap();
@@ -247,12 +289,12 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
 
 
 
-                                    if(jsonChildNode.getInt("advancebalance")>0){
+                                    if(jsonChildNode.getInt("advancebalance")>0&& chooseaccounts.getSelectedItem().toString().equalsIgnoreCase("SAVINGS")){
 
                                         totalsavings.setVisibility(View.INVISIBLE);
                                         available.setVisibility(View.INVISIBLE);
-                                           bbulder();
 
+                                       bbulder();
 
 
                                     }
@@ -279,12 +321,8 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                         Map<String, String> params = new HashMap<String, String>();
 
 
-                     String sql="SELECT  Ifnull( (sum( if( `transactiontype` = 'BORROW',(amount), 0 ) )-\n" +
-                             "                           sum( if(  `transactiontype` = 'PAYMENTS' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`\n" +
-                             "                 FROM \n" +
-                             "                            `transactions` WHERE `account`='SAVINGS' AND   `memberid`='"+Selectedmember+"' \n" +
-                             "                            \n" +
-                             "                            ORDER BY ref DESC LIMIT 1";
+                        String sql="SELECT  Ifnull( (sum( if( `transactiontype` = 'BORROW',(amount), 0 ) )-sum( if(  `transactiontype` = 'PAYMENTS' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`   FROM  " +
+                                "  `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' ORDER BY ref DESC LIMIT 1";
 
 
 
@@ -304,8 +342,11 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
 
 
                 StringPassed = "SELECT IF((select count(memberid) from loans where memberid='"+Selectedmember+"' and " +
-                        "transactionoption='BORROW' AND status='Active') >0,(select COUNT(ref) from loans where " +
-                        "transactionoption='PAYMENT' AND status='Active'),-1 ) AS `no` FROM loans   GROUP BY memberid" ;
+                        "                        transactionoption='BORROW' AND status='Active') >0,(select COUNT(ref) from loans where " +
+                        "                        transactionoption='PAYMENT' AND status='Active'),-1 ) AS `no`,Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
+                        "                            YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND" +
+                        "                             `transactionoption`='ADVANCE' " +
+                        "                            and status='Active',(amount), 0 ) ) )  ,0) as availabletopup FROM `transactions` WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"'  AND  transactions.`memberid`='"+Selectedmember+"'" ;
 
                 HashMap postData = new HashMap();
                 postData.put("function", "query");
@@ -440,10 +481,6 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
             }
         });
 
-
-
-
-
     }
 
 
@@ -496,9 +533,9 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
         }else if(SelectedModeOfDisbursement.equals("CASH")){
 
             StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                    "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`amount`)" +
-                    "VALUES('"  +Selectedmember+ "','" + currentDateandTime + "','SAVINGS','" +
-                    SelectedModeOfDisbursement + "','','BORROW','ADVANCE','"+repaymentperiod+"','" + AmountRequested.getText() + "')";
+                    "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`amount`,`status`)" +
+                    "VALUES('"  +Selectedmember+ "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
+                    SelectedModeOfDisbursement + "','','BORROW','ADVANCE','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active')";
 
             HashMap postData = new HashMap();
             postData.put("function", "action");
@@ -526,10 +563,10 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                     public void onClick(DialogInterface dialog, int which) {
                         m_Text = input.getText().toString();
 
-                        StringPassed = "insert into `advances`(`memberid`,`date`,`account`,`paymentmode`," +
-                                "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`)" +
-                                "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
-                                SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "')";
+                        StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
+                                "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`,`status`)" +
+                                "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
+                                SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active')";
 
                         HashMap postData = new HashMap();
                         postData.put("function", "action");
@@ -555,9 +592,9 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
             }else{
 
                 StringPassed = "insert into `advances`(`memberid`,`date`,`account`,`paymentmode`," +
-                        "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`)" +
-                        "VALUES('" + Selectedmember + "','" + currentDateandTime + "','SAVINGS','" +
-                        SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "')";
+                        "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`,`status`)" +
+                        "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
+                        SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active')";
 
                 HashMap postData = new HashMap();
                 postData.put("function", "action");
@@ -614,9 +651,11 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                 totalsavings.setText("");
                 available.setText("");
 
-                System.out.println(output);
+                System.out.println("maxi"+output);
                 JSONObject jsonObject = new JSONObject(output);
                 boolean success = jsonObject.getBoolean("success");
+
+
                 if (success) {
 
                     JSONArray jsonMainNode = jsonObject.optJSONArray("data");
@@ -625,18 +664,17 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                         JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
 
                         int content = jsonChildNode.getInt("no");
+                        int topup = jsonChildNode.getInt("availabletopup");
 
-                        if(content>=0&&content<4){
+                        if (content >= 0 && content < 4 ) {
 
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
                             builder.setMessage("Your not qualified for an advance because you have an existing loan. Please make payments for " +
                                     "atleast FOUR months !");
 
                             builder.setNegativeButton("Cancel", new
-                                    DialogInterface.OnClickListener()
-                                    {
-                                        public void onClick(DialogInterface dialog, int id)
-                                        {
+                                    DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
 
                                             finish();
 
@@ -646,35 +684,52 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                             builder.show();
 
 
-                        }else{
+                        } else if (topup < 0) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                            builder.setMessage("Your not qualified for an advance because your last months savings can not cater for the existing advance!");
 
+                            builder.setNegativeButton("Cancel", new
+                                    DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
 
-                            StringPassed = "SELECT (SELECT IFNULL((SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0))),0)" +
-                                    "FROM transactions WHERE transactions.`account`='SAVINGS' AND memberid='"+Selectedmember+"') AS `totalsavings`, " +
-                                    "IFNULL(((SELECT (SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0)))" +
-                                    "FROM transactions WHERE transactions.`account`='SAVINGS' AND memberid='"+Selectedmember+"') *2)- " +
-                                    " ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
-                                    "(SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='SAVINGS' " +
-                                    " AND memberid='"+Selectedmember+"')),0) AS availableforfortakingadvance" ;
+                                            finish();
 
-                            HashMap postData = new HashMap();
-                            postData.put("function", "query");
-                            postData.put("StringPassed", StringPassed);
-                            excecutingcategory="Membersavings";
-
-                            PostResponseAsyncTask loginTask =
-                                    new PostResponseAsyncTask(Advance_Application.this, postData,
-                                            Advance_Application.this);
-                            loginTask.execute(URL + "dbqueries.php");
-
-
-
-
+                                        }
+                                    });
+                            builder.setCancelable(false);
+                            builder.show();
                         }
+
+
+                    else{
+
+
+                        StringPassed = "SELECT (SELECT IFNULL((SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0))),0)" +
+                                "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='1') AS `totalsavings`," +
+                                "                                    IFNULL(((SELECT (SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0)))" +
+                                "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='" + Selectedmember + "') *2)- " +
+                                "                                    ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
+                                "                       (SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' " +
+                                "                                    AND memberid='" + Selectedmember + "')),0) AS availableforfortakingadvance,     Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
+                                "YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) ) )  ,0) as topupamounts FROM `transactions` " +
+                                "WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "'  AND  transactions.`memberid`='" + Selectedmember + "'";
+
+                        HashMap postData = new HashMap();
+                        postData.put("function", "query");
+                        postData.put("StringPassed", StringPassed);
+                        excecutingcategory = "Membersavings";
+
+                        PostResponseAsyncTask loginTask =
+                                new PostResponseAsyncTask(Advance_Application.this, postData,
+                                        Advance_Application.this);
+                        loginTask.execute(URL + "dbqueries.php");
+
 
                     }
 
-                }
+
+                }}
+
             } catch (Exception e) {
                 e.printStackTrace();
                 Toast.makeText(getApplicationContext(), "failed getting member's Balance " + e,
@@ -705,12 +760,21 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                                 format(jsonChildNode.getDouble("totalsavings")));
                         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
                         totalsavings.setText(content);
+                        if(chooseaccounts.getSelectedItem().toString().equalsIgnoreCase("SAVINGS")) {
 
-                        SpannableString contenavailable = new SpannableString("KES "+new DecimalFormat("#,###.##").
-                                format(jsonChildNode.getDouble("availableforfortakingadvance")));
+                            SpannableString contenavailable = new SpannableString("KES " + new DecimalFormat("#,###.##").
+                                    format(jsonChildNode.getDouble("availableforfortakingadvance")));
 
 
-                        available.setText(contenavailable);
+                        available.setText(contenavailable);}
+
+                        else{
+                            SpannableString contenavailable = new SpannableString("KES " + new DecimalFormat("#,###.##").
+                                    format(jsonChildNode.getDouble("topupamounts")));
+
+
+                            available.setText(contenavailable);
+                        }
                        int maxamountrequested=jsonChildNode.getInt("availableforfortakingadvance");
 
                         AmountRequested.setFilters(new InputFilter[]{ new MinMaxFilter("1",Integer.toString(maxamountrequested) )});
@@ -736,13 +800,15 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
                 boolean success = jsonObject.getBoolean("success");
                 if (success) {
 
-                    StringPassed = "SELECT (SELECT IFNULL((SUM(IF(savings.`transactiontype` = 'SAVINGS',(savings.amount), 0))),0)" +
-                            "FROM savings WHERE savings.`account`='SAVINGS' AND memberid='"+Selectedmember+"') AS `totalsavings`, " +
-                            "IFNULL(((SELECT (SUM(IF(savings.`transactiontype` = 'SAVINGS',(savings.amount), 0)))" +
-                            "FROM savings WHERE savings.`account`='SAVINGS' AND memberid='"+Selectedmember+"') *2)- " +
-                            " ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
-                            "(SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM advances WHERE `account`='SAVINGS' " +
-                            " AND memberid='"+Selectedmember+"')),0) AS availableforfortakingadvance" ;
+                    StringPassed = "SELECT (SELECT IFNULL((SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0))),0)" +
+                            "                                    FROM transactions WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"' AND memberid='1') AS `totalsavings`," +
+                            "                                    IFNULL(((SELECT (SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0)))" +
+                            "                                    FROM transactions WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"' AND memberid='"+Selectedmember+"') *2)- " +
+                            "                                    ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
+                            "                       (SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' " +
+                            "                                    AND memberid='"+Selectedmember+"')),0) AS availableforfortakingadvance,     Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
+                            "YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) ) )  ,0) as topupamounts FROM `transactions` " +
+                            "WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"'  AND  transactions.`memberid`='"+Selectedmember+"'" ;
 
                     HashMap postData = new HashMap();
                     postData.put("function", "query");
@@ -777,7 +843,7 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
 
     public  void bbulder(){
         AlertDialog.Builder builder = new AlertDialog.Builder(Advance_Application.this);
-        builder.setMessage("Member not eligible to an Advance du to an outstanding advance balance!").setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+        builder.setMessage("Member not eligible to an Advance due to an outstanding advance balance!").setPositiveButton("Okay", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Advance_Application.this, MainActivity.class);
