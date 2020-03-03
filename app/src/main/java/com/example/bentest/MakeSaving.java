@@ -2,6 +2,7 @@ package com.example.bentest;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,7 +54,7 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
     TextView totalsaving;
     TextView lastmonthsaving;
     ArrayList<String> Members = new ArrayList<>();
-
+Button back;
     EditText savingamount;
     AutoCompleteTextView autoCompleteTextView;
     String Selectedmember = "";
@@ -78,9 +80,10 @@ public class MakeSaving extends AppCompatActivity implements AsyncResponse, Adap
 chooseaccounts=findViewById(R.id.chooseaccountspn);
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
         Spinnerdisbursementmode = (android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
+        back=findViewById(R.id.backbtn);
 accountselectspinner();
 
-
+backpress();
     }
 
     public void accountselectspinner(){
@@ -591,4 +594,14 @@ accountselectspinner();
         }
 
     }
+    public void backpress(){
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(i);
+            }
+        });
+    }
+
 }

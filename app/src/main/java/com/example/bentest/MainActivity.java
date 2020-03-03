@@ -76,6 +76,12 @@ loanstxt=findViewById(R.id.loans);
         navigationView.setNavigationItemSelectedListener(this);
 
 
+
+
+       getrates();
+
+
+
         ActionItem requestAction = new ActionItem();
         requestAction.setTitle("Apply");
         requestAction.setIcon(getResources().getDrawable(R.drawable.savesaving));
@@ -381,7 +387,8 @@ loanstxt=findViewById(R.id.loans);
         } else if (id == R.id.nav_members) {
 
         } else if (id == R.id.nav_rates) {
-
+Intent i=new Intent(getApplicationContext(),rates.class);
+startActivity(i);
         } else if (id == R.id.nav_employees) {
 
         }else if (id == R.id.nav_regions) {
@@ -401,6 +408,74 @@ loanstxt=findViewById(R.id.loans);
         return true;
     }
 
+
+
+    public void getrates(){
+
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //  Log.d(TAG,response);
+                System.out.println(response);
+                try {
+                    System.out.println(response);
+                    JSONObject jsonObject = new JSONObject(response);
+                    System.out.println(response);
+                    boolean success = jsonObject.getBoolean("status");
+                    if (success) {
+                        //set this to the spinner
+
+                        JSONArray jsonMainNode = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < jsonMainNode.length(); i++) {
+                            JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+
+
+                            feessession sessionManager1=new feessession(getApplicationContext());
+
+                            sessionManager1.createSession(jsonChildNode.getString("loan_fee"),jsonChildNode.getString("loan_intrests")
+                                    ,jsonChildNode.getString("advance_fee"),jsonChildNode.getString("advance_intrests"),jsonChildNode.getString("advance_fines"),jsonChildNode.getString("loans_fines"));
+
+
+                        }
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error while reading nertwork", Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+
+                String sql="select * from  fees";
+
+
+
+
+
+                params.put("function", "getresult");
+                params.put("sql",sql);
+
+
+
+                return params;
+            }
+        };
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+
+
+
+    }
 
 
 

@@ -114,7 +114,15 @@ public void getloanbalances(){
                     for (int i = 0; i < jsonMainNode.length(); i++) {
                         JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
 
-int duepayment=Integer.valueOf(jsonChildNode.getString("totalloan"))/12;
+                      SessionManager  sessionManager1=new SessionManager(getContext());
+
+                        HashMap<String,String> user1=sessionManager1.getUserDetail();
+
+
+                        Toast.makeText(getContext(), user1.get(sessionManager1.NAME), Toast.LENGTH_SHORT).show();
+
+
+                        int duepayment=Integer.valueOf(jsonChildNode.getString("totalloan"))/12;
 if(New_Outstanding.getText().toString().contains("due")){
 New_Outstanding.setText(String.valueOf(duepayment));
     Amount_paid.setVisibility(View.VISIBLE);
@@ -198,7 +206,7 @@ System.out.println(response);
 
 
               String sql1= "update loans set status= 'paid' where `loanid`='1/SES1/2019' and `memberid`='"+id+"' and `status`='waiting';" ;
-              String sql2="insert into loans(`account`,`amount`,`loanid`,`memberid`,`transactionoption`,`transactiontype`,`repayment`,`next_payment`,`status`) VALUES('Savings','"+Amount_paid.getText().toString()+"','1/SES1/2019','"+id+"'" +
+              String sql2="insert into loans(`account`,`amount`,`loanid`,`memberid`,`transactionoption`,`transactiontype`,`next_payment`,`repayment`,`status`) VALUES('Savings','"+Amount_paid.getText().toString()+"','1/SES1/2019','"+id+"'" +
                       ",'Payment','Loan','"+nextpaymentdate.getText().toString()+"','"+getcurrentdate()+"','waiting');" ;
 
 
@@ -287,7 +295,7 @@ else{
               char id =Member.getText().toString().charAt(0);
 
 
-              String sql="SELECT     next_payment  ,if( `memberid`='"+id+"' AND `next_payment`>='"+getcurrentdate()+"' and `status`='waiting','paid' ,'due')  AS `nextrepayment` " +
+              String sql="SELECT     next_payment  ,if( `memberid`='"+id+"' AND `next_payment`<='"+getcurrentdate()+"' and `status`='waiting','due' ,'paid')  AS `nextrepayment` " +
                       "FROM `loans` WHERE    `memberid`='"+id+"' and `status`='waiting' order BY ref DESC LIMIT 1";
 
               System.out.println(sql);

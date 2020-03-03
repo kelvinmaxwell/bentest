@@ -104,10 +104,11 @@ public class Tab3Fragment extends Fragment {
                     }
                 };
 
+
                 String account = null;
                 String sql = "INSERT INTO `seskenya`.`loans` " +
-                        "(`Memberid`, `guarantor`, `transactiontype`,`transactionoption`, `account`, `col1`, `val1`,`col2`, `val2`,`col3`, `val3`, `amount`)" +
-                        " VALUES ('"+memid+"', '"+guarontorid+"', 'Loan','Borrow', '"+account+"', '"+col1.getText().toString()+"', '"+val1.getText().toString()+"', '"+col2.getText().toString()+"', '"+val2.getText().toString()+"', '"+col3.getText().toString()+"', '"+val3.getText().toString()+"','"+ etamount.getText().toString()+"');";
+                        "(`Memberid`, `guarantor`, `transactiontype`,`transactionoption`, `account`, `col1`, `val1`,`col2`, `val2`,`col3`, `val3`, `amount`,`next_payment`,`repayment`,`status`)" +
+                        " VALUES ('"+memid+"', '"+guarontorid+"', 'Loan','Borrow', '"+account+"', '"+col1.getText().toString()+"', '"+val1.getText().toString()+"', '"+col2.getText().toString()+"', '"+val2.getText().toString()+"', '"+col3.getText().toString()+"', '"+val3.getText().toString()+"','"+ etamount.getText().toString()+"','"+((LoanApplicationForm)getActivity()).adddates(1)+"','"+((LoanApplicationForm)getActivity()).adddates(0)+"','waiting');";
                 String function = "action";
                 ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                 RequestQueue requestQueue = Volley.newRequestQueue(getContext());

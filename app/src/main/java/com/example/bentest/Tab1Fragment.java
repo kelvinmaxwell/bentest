@@ -147,8 +147,7 @@ public class Tab1Fragment extends Fragment {
                 String function = "query";
                 String sql = "SELECT ifnull(sum( if( `transactionoption` = 'ADVANCE' AND `transactiontype` = 'BORROW' ,(amount), 0 )" +
                         " - if(  `transactionoption` = 'ADVANCE' AND `transactiontype` = 'PAYMENTS' ,(amount), 0 ) ),0) AS `advance` " +
-                        " FROM `transactions` WHERE `account`='SAVINGS' and " +
-                        " `memberid` = '"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
+                        " FROM `transactions` WHERE  `memberid` = '"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
                 System.out.println(sql);
                 ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                 RequestQueue requestQueue = Volley.newRequestQueue(getContext());

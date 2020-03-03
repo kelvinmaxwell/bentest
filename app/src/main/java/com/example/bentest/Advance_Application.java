@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,7 +54,7 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
     ArrayAdapter<CharSequence>adapter;
     private JSONArray result;
     private Map<java.lang.String, java.lang.String> params;
-
+Button back;
     AutoCompleteTextView autoCompleteTextView;
     TextView totalsavings;
     TextView available;
@@ -107,8 +108,9 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
         chooseaccounts=findViewById(R.id.chooseaccountspn);
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
         Spinnerdisbursementmode = (android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
+        back=findViewById(R.id.backbtn);
         accountselectspinner();
-
+backpress();
 
 
 
@@ -705,7 +707,7 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
 
 
                         StringPassed = "SELECT (SELECT IFNULL((SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0))),0)" +
-                                "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='1') AS `totalsavings`," +
+                                "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='" + Selectedmember + "') AS `totalsavings`," +
                                 "                                    IFNULL(((SELECT (SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0)))" +
                                 "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='" + Selectedmember + "') *2)- " +
                                 "                                    ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
@@ -855,7 +857,15 @@ public class Advance_Application extends AppCompatActivity implements AsyncRespo
     }
 
 
-
+    public void backpress(){
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i=new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(i);
+            }
+        });
+    }
 
 
 }
