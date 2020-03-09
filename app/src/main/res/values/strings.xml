@@ -173,6 +173,7 @@
         <item>EDUCATION</item>
 
     </string-array>
+    <string name="title_activity_members">members</string>
 
 
 </resources>

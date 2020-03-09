@@ -63,11 +63,12 @@ Button back;
 
     TextView totalsaving;
     TextView lastmonthsaving;
+
     ArrayList<String> Members = new ArrayList<>();
     ArrayAdapter<CharSequence>adapter;
     EditText savingamount;
     AutoCompleteTextView autoCompleteTextView;
-    EditText advanceid;
+    EditText advanceid,advanceid2;
     String Selectedmember = "";
     String StringPassed = "";
     String function = "";
@@ -96,6 +97,7 @@ chooseaccounts=findViewById(R.id.chooseaccountspn);
         MemberGroups.add("Select Group");
 advanceid=findViewById(R.id.loanid);
 back=findViewById(R.id.backbtn);
+advanceid2=findViewById(R.id.advance_id);
         savingamount= (EditText) findViewById(R.id.choosemode);
 savingamount.setEnabled(true);
 backpress();
@@ -253,17 +255,19 @@ savings();
 
                 Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
 
-                StringPassed = "SELECT type_id,ifnull((select amount FROM  \n" +
-                        "                            `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND \n" +
+                String StringPassed = "SELECT ifnull((select SUM(amount) FROM  \n" +
+                        "                            `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND \n" +
                         "                            transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as initial_amount\n" +
-                        ",ifnull((select repaymentperiod FROM `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as repaymentitme, Ifnull( (sum( if( `transactiontype` = 'BORROW' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"' and `transactionoption`='ADVANCE' and status='Active' ,(amount), 0 ) )-" +
-                        "sum( if(  `transactiontype` = 'PAYMENTS' AND `transactionoption`='ADVANCE' and `account`='"+chooseaccounts.getSelectedItem().toString()+"' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
+                        ",type_id,ifnull((select repaymentperiod FROM  " +
+                        "                            `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND " +
+                        "                            transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as repaymentitme, Ifnull( (sum( if( `transactiontype` = 'BORROW'   AND `account`='" + chooseaccounts.getSelectedItem().toString() + "'AND  `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) )-" +
+                        "sum( if(  `transactiontype` = 'PAYMENTS' and   `transactionoption`='ADVANCE' and `status`='Active' and `account`='" + chooseaccounts.getSelectedItem().toString() + "' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
                         " Ifnull((select DATEDIFF(DATE_ADD(date, INTERVAL repaymentperiod MONTH),NOW()) FROM  " +
-                        " `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND " +
-                        " transactiontype='BORROW' AND transactionoption='ADVANCES' ORDER BY ref DESC LIMIT 1),0)" +
-                        " AS remainingdays,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `transactions` where `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND " +
-                        "                             transactiontype='BORROW' AND transactionoption='ADVANCE'),0) AS DateDiff  FROM `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' and `status`='Active' " +
-                        " ORDER BY ref DESC LIMIT 1 " ;
+                        " `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND " +
+                        " transactiontype='BORROW' AND transactionoption='ADVANCES' and `status`='Active' ORDER BY ref DESC LIMIT 1),0)" +
+                        " AS remainingdays,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `transactions` where `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND " +
+                        "                             transactiontype='BORROW' AND transactionoption='ADVANCE' and `status`='Active' ORDER BY ref ASC LIMIT 1),0) AS DateDiff  FROM `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' and `status`='Active' " +
+                        " ORDER BY ref DESC LIMIT 1 ";
 
                 HashMap postData = new HashMap();
                 postData.put("function", "query");
@@ -365,7 +369,7 @@ savings();
                     //  Log.d(TAG,response);
                     System.out.println(response);
                     try {
-                        System.out.println(response);
+                        System.out.println("maxi"+response);
                         JSONObject jsonObject = new JSONObject(response);
                         boolean success = jsonObject.getBoolean("status");
                         if (success) {
@@ -382,7 +386,8 @@ savings();
 
 
                         Double[] amount_payable= checkloanpayment(rpaymentperiod,advancebalances,initial_amount);
-if(datediff<rpaymentperiod){
+if(datediff<=rpaymentperiod){
+    Toast.makeText(payadvance.this, String.valueOf(amount_payable[0])+ amount_payable[1], Toast.LENGTH_SHORT).show();
                         if(amount_payable[2]>amount_payable[0]){
                             if    (Double.valueOf(savingamount.getText().toString())<amount_payable[0]){
 
@@ -438,18 +443,18 @@ if(datediff<rpaymentperiod){
                     Map<String, String> params = new HashMap<String, String>();
 
 
-                    String StringPassed = "SELECT ifnull((select amount FROM  \n" +
+                    String StringPassed = "SELECT ifnull((select SUM(amount) FROM  \n" +
                             "                            `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND \n" +
                             "                            transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as initial_amount\n" +
                             ",type_id,ifnull((select repaymentperiod FROM  " +
                             "                            `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND " +
-                            "                            transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as repaymentitme, Ifnull( (sum( if( `transactiontype` = 'BORROW' and `type_id`='123'  AND `account`='" + chooseaccounts.getSelectedItem().toString() + "'AND  `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) )-" +
-                            "sum( if(  `transactiontype` = 'PAYMENTS' AND `type_id`='123' and  `transactionoption`='ADVANCE' and `account`='" + chooseaccounts.getSelectedItem().toString() + "' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
+                            "                            transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as repaymentitme, Ifnull( (sum( if( `transactiontype` = 'BORROW'   AND `account`='" + chooseaccounts.getSelectedItem().toString() + "'AND  `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) )-" +
+                            "sum( if(  `transactiontype` = 'PAYMENTS' and   `transactionoption`='ADVANCE' and `status`='Active' and `account`='" + chooseaccounts.getSelectedItem().toString() + "' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
                             " Ifnull((select DATEDIFF(DATE_ADD(date, INTERVAL repaymentperiod MONTH),NOW()) FROM  " +
                             " `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND " +
-                            " transactiontype='BORROW' AND transactionoption='ADVANCES' ORDER BY ref DESC LIMIT 1),0)" +
+                            " transactiontype='BORROW' AND transactionoption='ADVANCES' and `status`='Active' ORDER BY ref DESC LIMIT 1),0)" +
                             " AS remainingdays,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `transactions` where `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' AND " +
-                            "                             transactiontype='BORROW' AND transactionoption='ADVANCE'),0) AS DateDiff  FROM `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' and `status`='Active' " +
+                            "                             transactiontype='BORROW' AND transactionoption='ADVANCE' and `status`='Active' ORDER BY ref Asc LIMIT 1),0) AS DateDiff  FROM `transactions` WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' AND   `memberid`='" + Selectedmember + "' and `status`='Active' " +
                             " ORDER BY ref DESC LIMIT 1 ";
 
 
@@ -522,6 +527,7 @@ if(datediff<rpaymentperiod){
                         Double rpaymentperiod=jsonChildNode.getDouble("repaymentitme");
 
                         Double initial_amount=jsonChildNode.getDouble("initial_amount");
+                        Toast.makeText(this, String.valueOf(initial_amount), Toast.LENGTH_SHORT).show();
                         Double[] amount_payable= checkloanpayment(rpaymentperiod,advancebalances,initial_amount);
                         if(amount_payable[2]>0) {
 
@@ -538,7 +544,7 @@ if(datediff<rpaymentperiod){
 
                             SpannableString remainingdys = new SpannableString(jsonChildNode.getString("remainingdays") + " Days ");
                             lastmonthsaving.setText(remainingdys);
-                            advanceid.setText(jsonChildNode.getString("type_id"));
+                            advanceid2.setText(jsonChildNode.getString("type_id"));
                         }
                         else{
 
@@ -571,18 +577,16 @@ if(datediff<rpaymentperiod){
                 if (success) {
 
 
-                    StringPassed ="SELECT ifnull((select amount FROM  \n" +
+                    StringPassed = "SELECT type_id,ifnull((select SUM(amount) FROM  \n" +
                             "                            `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND \n" +
-                            "                            transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as initial_amount\n" +
-                            ",type_id,ifnull((select repaymentperiod FROM  " +
-                            "                            `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND " +
-                            "                            transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref DESC LIMIT 1 ),0) as repaymentitme, Ifnull( (sum( if( `transactiontype` = 'BORROW' and `type_id`='123'  AND `account`='"+chooseaccounts.getSelectedItem().toString()+"'AND  `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) )-" +
-                            "sum( if(  `transactiontype` = 'PAYMENTS' AND `type_id`='123' and  `transactionoption`='ADVANCE' and `account`='"+chooseaccounts.getSelectedItem().toString()+"' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
+                            "                            transactiontype='BORROW' AND transactionoption='ADVANCE' and `status`='Active' ORDER BY ref DESC LIMIT 1 ),0) as initial_amount\n" +
+                            ",ifnull((select repaymentperiod FROM `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND transactiontype='BORROW' AND transactionoption='ADVANCE' and `status`='Active' ORDER BY ref DESC LIMIT 1 ),0) as repaymentitme, Ifnull( (sum( if( `transactiontype` = 'BORROW' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"' and `transactionoption`='ADVANCE' and status='Active' ,(amount), 0 ) )-" +
+                            "sum( if(  `transactiontype` = 'PAYMENTS' AND `transactionoption`='ADVANCE' and `account`='"+chooseaccounts.getSelectedItem().toString()+"' ,(amount), 0 ) ) )  ,0)    AS `advancebalance`," +
                             " Ifnull((select DATEDIFF(DATE_ADD(date, INTERVAL repaymentperiod MONTH),NOW()) FROM  " +
                             " `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND " +
                             " transactiontype='BORROW' AND transactionoption='ADVANCES' ORDER BY ref DESC LIMIT 1),0)" +
                             " AS remainingdays,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `transactions` where `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' AND " +
-                            "                             transactiontype='BORROW' AND transactionoption='ADVANCE'),0) AS DateDiff  FROM `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' and `status`='Active' " +
+                            "                             transactiontype='BORROW' AND transactionoption='ADVANCE' ORDER BY ref Asc LIMIT 1),0) AS DateDiff  FROM `transactions` WHERE `account`='"+chooseaccounts.getSelectedItem().toString()+"' AND   `memberid`='"+Selectedmember+"' and `status`='Active' " +
                             " ORDER BY ref DESC LIMIT 1 " ;
 
 
@@ -674,16 +678,8 @@ Double intrest=0.1*initialamount;
 
         Double remaining=totalintrest +advancebalances;
 
-        Double[] arr;
+        Double[] arr={intrest,totalintrest,remaining};
 
-        arr = new Double[4];
-
-
-        arr[0] =intrest;
-
-
-        arr[1] = totalintrest;
-        arr[2] = remaining;
 
 
         return arr;
@@ -715,7 +711,7 @@ Double intrest=0.1*initialamount;
             String sql1 = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                     "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`next_repayment`,`amount`,`type_id`,`status`,`Action`)" +
                     "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
-                    SelectedModeOfDisbursement + "','','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid.getText().toString() + "','Active','Pending')";
+                    SelectedModeOfDisbursement + "','','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid2.getText().toString() + "','Active','Pending')";
 
             String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE'" ;
             HashMap postData = new HashMap();
@@ -748,7 +744,7 @@ Double intrest=0.1*initialamount;
                         StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                                 "`transactionnumber`,`transactiontype`,``transactionoption`,repaymentperiod`,`next_repayment`,`amount`,`type_id`,`status`,`Action`)" +
                                 "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
-                                SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid.getText().toString() + "','Active','pending')";
+                                SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid2.getText().toString() + "','Active','pending')";
 
 
                         String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"' ";
@@ -785,7 +781,7 @@ Double intrest=0.1*initialamount;
                 StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                         "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`next_repayment`,`amount`,`type_id`,`status`,`Action`)" +
                         "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
-                        SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid.getText().toString() + "','Active','Pending')";
+                        SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid2.getText().toString() + "','Active','Pending')";
                 String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE' and account='"+chooseaccounts.getSelectedItem().toString()+"'" ;
                 HashMap postData = new HashMap();
                 postData.put("function", "transactions");

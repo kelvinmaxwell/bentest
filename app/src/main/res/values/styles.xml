@@ -58,7 +58,6 @@
     <style name="Animations.PopDownMenu" />
 
 
-
     <style name="Animations.PopDownMenu.Reflect">
         <item name="android:windowEnterAnimation">@anim/pump_top</item>
         <item name="android:windowExitAnimation">@anim/disappear</item>
@@ -102,5 +101,14 @@
         <item name="android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
         <item name="android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
     </style>
+
+    <style name="AppTheme.NoActionBar.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

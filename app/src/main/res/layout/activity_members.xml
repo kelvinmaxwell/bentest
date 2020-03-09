@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".members">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout4"
+            android:layout_width="414dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <androidx.cardview.widget.CardView
+            android:id="@+id/cardview1"
+                android:layout_width="208dp"
+                android:layout_height="234dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/textView18"
+                        android:layout_width="63dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="26dp"
+                        android:text="Total members"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/totalmembers"
+                        android:layout_width="140dp"
+                        android:layout_height="135dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/membersdesighn"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name"
+                        android:textColor="@android:color/black"
+                        android:enabled="false"
+                        android:textStyle="italic"
+
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview2"
+                android:layout_width="208dp"
+                android:layout_height="234dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="63dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="26dp"
+                        android:text="Savings"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/savings"
+                        android:layout_width="140dp"
+                        android:layout_height="135dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/savings"
+                        android:textStyle="italic"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name"
+                        android:enabled="false"
+                        android:textColor="@android:color/black"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/savingstxt"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginTop="5dp"
+                android:text="SAVINGS"
+                android:background="@android:color/black"
+                android:textColor="@android:color/white"
+                android:textAlignment="center"
+                app:layout_constraintTop_toBottomOf="@id/cardview1"
+                tools:layout_editor_absoluteX="116dp" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview3"
+                android:layout_width="208dp"
+                android:layout_height="234dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="7dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/savingstxt">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/textView19"
+                        android:layout_width="63dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="26dp"
+                        android:text="Loans"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/loans_savings"
+                        android:layout_width="140dp"
+                        android:layout_height="135dp"
+                        android:layout_marginTop="21dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/loans4"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+android:textColor="@android:color/black"
+                        android:textStyle="italic"
+                        android:text="Name"
+                        android:textAlignment="center"
+                        android:enabled="false"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView19" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview4"
+                android:layout_width="208dp"
+                android:layout_height="234dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/savingstxt">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="63dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="26dp"
+                        android:text="Advances"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/advances_savings"
+                        android:layout_width="140dp"
+                        android:layout_height="135dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/advances"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name"
+                        android:textColor="@android:color/black"
+                        android:textAlignment="center"
+                        android:textStyle="italic"
+                        android:enabled="false"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/EDUCATION"
+                android:layout_width="413dp"
+                android:layout_height="24dp"
+                android:layout_marginTop="5dp"
+
+                android:text="EDUCATION"
+                android:textColor="@android:color/white"
+                android:textAlignment="center"
+                android:background="@android:color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardview3" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview5"
+                android:layout_width="208dp"
+                android:layout_height="234dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="7dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/EDUCATION">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/textView16"
+                        android:layout_width="48dp"
+                        android:layout_height="21dp"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="26dp"
+                        android:text="Loans"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/loans_edu"
+                        android:layout_width="140dp"
+                        android:layout_height="135dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/loans2"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name"
+                        android:textColor="@android:color/black"
+                        android:textAlignment="center"
+                        android:enabled="false"
+                        android:textStyle="italic"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview6"
+                android:layout_width="208dp"
+                android:layout_height="234dp"
+                android:layout_marginTop="7dp"
+                android:layout_marginEnd="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/EDUCATION">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+
+                    <TextView
+                        android:id="@+id/textView101"
+                        android:layout_width="63dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginTop="26dp"
+                        android:text="Advances"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <EditText
+                        android:id="@+id/advances_edu"
+                        android:layout_width="140dp"
+                        android:layout_height="135dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@drawable/advances2"
+                        android:ems="10"
+                        android:inputType="textPersonName"
+                        android:text="Name"
+                        android:textStyle="italic"
+                        android:enabled="false"
+
+                        android:textColor="@android:color/black"
+                        android:textAlignment="center"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/pieChart"
+            android:layout_width="400dp"
+            android:layout_height="400dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/constraintLayout4"
+            tools:layout_editor_absoluteY="598dp" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>

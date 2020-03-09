@@ -241,8 +241,8 @@ backpress();
 
                 Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
 
-                StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"' ,(transactions.amount), 0))),0)" +
-                        "                AS `totalsavings`,Ifnull(sum( if(  transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"' " +
+                StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = 'SAVINGS' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"',(transactions.amount), 0))),0)" +
+                        "                AS `totalsavings`,Ifnull(sum( if(  transactions.`transactiontype` = 'SAVINGS' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"'" +
                         " AND YEAR(transactions.date) =" +
                         "                        YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
                         "                        (transactions.amount),0)),0) as lastmonthsavings FROM `transactions` WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"'  AND  transactions.`memberid`='"+Selectedmember+"';" ;
@@ -396,8 +396,8 @@ backpress();
 
             StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
                     "`transactionnumber`,`transactiontype`,`transactionoption`,`amount`)" +
-                    "VALUES('"+Selectedmember+"','"+currentDateandTime+"','"+chooseaccounts.getSelectedItem().toString()+"','"+SelectedModeOfDisbursement+"','"+chooseaccounts.getSelectedItem().toString()+"'," +
-                    " '"+chooseaccounts.getSelectedItem().toString()+"','"+chooseaccounts.getSelectedItem().toString()+"','"+savingamount.getText()+"')";
+                    "VALUES('"+Selectedmember+"','"+currentDateandTime+"','"+chooseaccounts.getSelectedItem().toString()+"','"+SelectedModeOfDisbursement+"','CASH'," +
+                    " 'SAVINGS','SAVINGS','"+savingamount.getText()+"')";
 
 
             HashMap postData = new HashMap();
@@ -562,7 +562,7 @@ backpress();
 
 
 
-                    StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"' ,(transactions.amount), 0))),0) " +
+                    StringPassed = "SELECT IFNULL( (SUM(IF(transactions.`transactiontype` = 'SAVINGS' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"' ,(transactions.amount), 0))),0) " +
                             "AS `totalsavings`,Ifnull(sum( if(transactions.`transactiontype` = '"+chooseaccounts.getSelectedItem().toString()+"'  AND YEAR(transactions.date) =" +
                             " YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ," +
                             "(transactions.amount),0)),0) as lastmonthsavings FROM `transactions`  WHERE transactions.`account`='"+chooseaccounts.getSelectedItem().toString()+"'  AND  transactions.`memberid`='"+Selectedmember+"'" ;

@@ -266,7 +266,7 @@
                     android:id="@+id/imageView3"
                     android:layout_width="75dp"
                     android:layout_height="73dp"
-
+                    android:background="@drawable/roundcolorbrown"
                     android:layout_marginStart="24dp"
                     android:layout_marginTop="29dp"
                     android:gravity="center"

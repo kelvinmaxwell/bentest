@@ -278,11 +278,15 @@ public class Tab1Fragment extends Fragment {
                                         JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                                         Members.add(jsonChildNode.getString("totalsavings"));
                                         etamount.setFilters(new InputFilter[]{ new MinMaxFilter("1", Integer.toString(jsonChildNode.getInt("totalsavings")*3))});
-
-                                        textView.setText("Available: KES "+
-                                                new DecimalFormat("#,###.##").
-                                                        format(jsonChildNode.getDouble("totalsavings")*3));
-
+                                        Double amountavailable=jsonChildNode.getDouble("totalsavings")*3-jsonChildNode.getDouble("totalloans");
+                                        if(amountavailable>0) {
+                                            textView.setText("Available: KES " +
+                                                    new DecimalFormat("#,###.##").
+                                                            format(amountavailable));
+                                        }
+                                        else if(amountavailable<=0){
+                                            bbulder("You are not qualified");
+                                        }
                                     }
 
                                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Members);
@@ -300,9 +304,11 @@ public class Tab1Fragment extends Fragment {
 
                     memid = autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "");
                     String function = "query";
-                    String sql = "SELECT ifnull(sum( if(  `transactiontype` = 'SAVINGS',(amount), 0 ) ),0) AS `totalsavings` FROM `transactions` WHERE `transactiontype`='"+Spinner2.getItemAtPosition(position).toString()+"' and `memberid`='"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
+                //    String sql = "SELECT ifnull(sum( if(  `transactiontype` = 'SAVINGS',(amount), 0 ) ),0) AS `totalsavings` FROM `transactions` WHERE `transactiontype`='"+Spinner2.getItemAtPosition(position).toString()+"' and `memberid`='"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
 
-
+              String sql=  "SELECT ifnull((select sum(amount) from `transactions` where `transactionoption`='SAVINGS' and `transactiontype`='SAVINGS' AND `memberid`='1' and `account`='"+Spinner2.getSelectedItem().toString()+"'order by ref DESC LIMIT 1 ),0) " +
+                      "as totalsavings,ifnull((select sum(`amount`) from loans WHERE " +
+                      "`transactionoption`='Borrow' and `transactiontype`='Loan' and `memberid`='"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"' and `status`='waiting'),0) as totalloans";
                     System.out.println(sql);
                     ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                     RequestQueue requestQueue = Volley.newRequestQueue(getContext());
@@ -317,8 +323,7 @@ public class Tab1Fragment extends Fragment {
 
 
         Spinner3 = (Spinner) view.findViewById(R.id.Spinner3);
-        String = new String[]{
-                "Repayment Period (yrs)", "1", "2", "3"
+        String = new String[]{"Repayment Period (yrs)", "1", "2", "3","4","5","6" ,"7","8","9","10","11","12","13","14","15","16"
 
         };
 
@@ -430,4 +435,17 @@ public class Tab1Fragment extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(recordOffence);
     }
+    public  void bbulder(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(message).setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+getActivity().finish();
+
+            }
+        }).create().show();
+
+    }
+
 }

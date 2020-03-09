@@ -383,9 +383,11 @@ loanstxt=findViewById(R.id.loans);
         int id = item.getItemId();
 
         if (id == R.id.nav_groups) {
-            // Handle the camera action
+            Intent i=new Intent(getApplicationContext(),groups.class);
+            startActivity(i);
         } else if (id == R.id.nav_members) {
-
+            Intent i=new Intent(getApplicationContext(),members.class);
+            startActivity(i);
         } else if (id == R.id.nav_rates) {
 Intent i=new Intent(getApplicationContext(),rates.class);
 startActivity(i);

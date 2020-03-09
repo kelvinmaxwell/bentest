@@ -15,7 +15,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".rates"></activity>
+        <activity
+            android:name=".members"
+            android:label="@string/title_activity_members"
+            android:theme="@style/AppTheme.NoActionBar.NoActionBar"></activity>
+        <activity android:name=".groups" />
+        <activity android:name=".rates" />
         <activity android:name=".MakeSaving" />
         <activity android:name=".payadvance" />
         <activity android:name=".Defaulter" />
