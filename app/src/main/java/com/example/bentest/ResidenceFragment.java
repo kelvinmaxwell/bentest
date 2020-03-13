@@ -62,11 +62,11 @@ public class ResidenceFragment extends Fragment {
                         JSONArray jsonMainNode = jsonObject.optJSONArray("data");
                         for (int i = 0; i < jsonMainNode.length(); i++) {
                             JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-                            county.setText(jsonChildNode.getString("county"));
-                            town.setText(jsonChildNode.getString("town"));
-                            location.setText(jsonChildNode.getString("location"));
-                            sublocation.setText(jsonChildNode.getString("sublocation"));
-                            address.setText(jsonChildNode.getString("address"));
+                            county.setText("County"+jsonChildNode.getString("county"));
+                            town.setText("Town"+jsonChildNode.getString("town"));
+                            location.setText("Loacation"+jsonChildNode.getString("location"));
+                            sublocation.setText("sublocation"+jsonChildNode.getString("sublocation"));
+                            address.setText("Adrress"+jsonChildNode.getString("address"));
                         }
 
 
@@ -84,7 +84,7 @@ public class ResidenceFragment extends Fragment {
 
             }
         };
-        String sql = "SELECT * FROM members WHERE `id number` = '"+memidno+"'";
+        String sql = "SELECT * FROM members WHERE `memberid` = '"+memidno+"'";
         ActionRequest driverLoginRequest = new ActionRequest("dboperations.php","query",sql,responseListener);
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(driverLoginRequest);

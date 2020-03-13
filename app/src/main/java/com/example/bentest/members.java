@@ -3,7 +3,9 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,6 +48,7 @@ public class members extends AppCompatActivity {
     BarData barData;
     BarDataSet barDataSet;
     ArrayList barEntries;
+    ProgressBar pgr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,8 @@ public class members extends AppCompatActivity {
         advances_savings=findViewById(R.id.advances_savings);
         loans_edu=findViewById(R.id.loans_edu);
         advances_edu=findViewById(R.id.advances_edu);
+        pgr=findViewById(R.id.progressBar3);
+
 
 
 //        getEntries();
@@ -102,7 +107,7 @@ public class members extends AppCompatActivity {
 
     public void getmembersdetails(){
 
-
+        pgr.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -129,7 +134,7 @@ public class members extends AppCompatActivity {
                             int savingsnu=jsonChildNode.getInt("savingsnu");
                             int advancenu=jsonChildNode.getInt("advancenu");
                             int Loansnu=jsonChildNode.getInt("Loansnu");
-
+                            pgr.setVisibility(View.GONE);
 
                                 Totalmembers.setText(String.valueOf(totalmember));
                                 savingss.setText(String.valueOf(totalsavings));
@@ -189,9 +194,9 @@ public class members extends AppCompatActivity {
                         "`transactionoption`='ADVANCE' AND `status`='Active' ),0)- ifnull((select sum(`amount`) from " +
                         "`transactions` where `transactiontype`='PAYMENT' AND `transactionoption`='ADVANCE' AND `status`='Active'" +
                         " AND `account`='SAVINGS' ),0) as advance_savings,ifnull((select sum(`amount`) from `loans` where " +
-                        "`transactiontype`='Loan' AND `transactionoption`='Borrow' AND `status`='Waiting' ),0)- " +
+                        "`transactiontype`='Loan' AND `transactionoption`='Borrow' AND `Active`='active' ),0)- " +
                         "ifnull((select sum(`amount`) from `loans` where `transactiontype`='Loan' AND `transactionoption`=" +
-                        "'PAYMENT' AND `status`='waiting' AND `account`='SAVINGS' ),0) as Loans_savings,ifnull((select sum(`amount`) " +
+                        "'PAYMENT' AND `Active`='active' AND `account`='SAVINGS' ),0) as Loans_savings,ifnull((select sum(`amount`) " +
                         "from `transactions` where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' AND `status`='Active' and `account`='EDUCATION' ),0)- " +
                         "ifnull((select sum(`amount`) from `transactions` where `transactiontype`='PAYMENT' AND `transactionoption`='ADVANCE' AND `status`='Active' AND `account`='EDUCATION' ),0)" +
                         " as advance_edu,ifnull((select sum(`amount`) from `loans` where `transactiontype`='Loan' AND `transactionoption`='Borrow' AND `status`='Waiting' AND `account`='EDUCATION' ),0)-" +

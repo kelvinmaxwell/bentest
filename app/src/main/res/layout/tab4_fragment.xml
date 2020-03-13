@@ -14,8 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="52dp"
-        app:layout_constraintBottom_toTopOf="@+id/button2"
+        android:layout_marginBottom="130dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <EditText
@@ -23,6 +23,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
+            android:textColor="@color/fadedblack"
+            android:enabled="false"
             android:ems="10"
             android:hint="County "
             android:inputType="textPersonName" />
@@ -42,6 +44,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
+            android:textColor="@color/fadedblack"
+            android:enabled="false"
             android:ems="10"
             android:hint="Town"
             android:inputType="textPersonName" />
@@ -61,6 +65,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
+            android:textColor="@color/fadedblack"
+            android:enabled="false"
             android:ems="10"
             android:hint="Location"
             android:inputType="textPersonName" />
@@ -81,6 +87,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
+            android:textColor="@color/fadedblack"
+            android:enabled="false"
             android:ems="10"
             android:hint="Sub Location"
             android:inputType="textPersonName" />
@@ -99,6 +107,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
+            android:textColor="@color/fadedblack"
+            android:enabled="false"
             android:ems="10"
             android:hint="Sub Location"
             android:inputType="textPersonName" />
@@ -110,6 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
         android:text="Next"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

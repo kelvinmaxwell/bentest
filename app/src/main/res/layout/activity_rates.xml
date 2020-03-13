@@ -195,9 +195,10 @@
                     android:id="@+id/updatebtn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="#684DFF"
+
                     android:textAlignment="center"
                     android:text="Set-Values"
+                    android:background="@color/buttoncolour"
                     android:textColor="@android:color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />

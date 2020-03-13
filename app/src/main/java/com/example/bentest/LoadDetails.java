@@ -4,10 +4,13 @@ package com.example.bentest;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import android.text.InputFilter;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +37,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -41,6 +45,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import static com.example.bentest.MainActivity.memidno;
 
 import static android.R.layout.simple_spinner_item;
 
@@ -48,10 +53,13 @@ import static android.R.layout.simple_spinner_item;
 
 
 public class LoadDetails extends Fragment {
-    public TextView Loan_ID,Member,Loan_Amount,Outstanding_Amount,New_Outstanding,Amount_paid;
+    public TextView New_Outstanding,Amount_paid;
 public Button submitloanetails;
-EditText nextpaymentdate;
+static String col1,val1,col2,val2,col3,val3;
+EditText nextpaymentdate,Member,Loan_ID,Loan_Amount,Outstanding_Amount;
     final Calendar myCalendar = Calendar.getInstance();
+    String guarantor="";
+    Double itialloan=null,repaymentperiod=null,outstandingloan=null,amountpayable=null,datediffrence=null;
 
 
     @Override
@@ -95,7 +103,7 @@ submitloanspayment();
 
 
 public void getloanbalances(){
-    checkdupdate();
+
 
     StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
         @Override
@@ -121,23 +129,34 @@ public void getloanbalances(){
 
                         Toast.makeText(getContext(), user1.get(sessionManager1.NAME), Toast.LENGTH_SHORT).show();
 
+                            guarantor=jsonChildNode.getString("guarantor");
 
-                        int duepayment=Integer.valueOf(jsonChildNode.getString("totalloan"))/12;
-if(New_Outstanding.getText().toString().contains("due")){
-New_Outstanding.setText(String.valueOf(duepayment));
-    Amount_paid.setVisibility(View.VISIBLE);
-   Amount_paid.setFilters(new InputFilter[]{ new MinMaxFilter("1", String.valueOf(duepayment))});
-submitloanetails.setVisibility(View.VISIBLE);
-nextpaymentdate.setVisibility(View.VISIBLE);}
-else{
-Amount_paid.setVisibility(View.GONE);
-    submitloanetails.setVisibility(View.GONE);
-    nextpaymentdate.setVisibility(View.GONE);}
+                         itialloan=jsonChildNode.getDouble("totalloan");
+                         outstandingloan=jsonChildNode.getDouble("loanbalance");
+                            datediffrence=jsonChildNode.getDouble("DateDiff");
+                                repaymentperiod= jsonChildNode.getDouble("repaymentperiod");
 
-                       Loan_Amount.setText(jsonChildNode.getString("totalloan"));
 
-                       Outstanding_Amount.setText(jsonChildNode.getString("loanbalance"));
+                                Loan_ID.setText(jsonChildNode.getString("loanid"));
 
+                        SpannableString content = new SpannableString("KES "+new DecimalFormat("#,###.##").
+                                format(jsonChildNode.getDouble("totalloan")));
+                        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+                        Loan_Amount.setText(content);
+
+                                      //  Loan_Amount.setText(jsonChildNode.getString("totalloan"));
+                                    Double outstanding= jsonChildNode.getDouble("loanbalance")+(0.1*repaymentperiod*itialloan);
+
+                                    Outstanding_Amount.setText(String.valueOf(outstanding));
+
+                                     New_Outstanding.setText(jsonChildNode.getString(String.valueOf(outstanding)));
+
+                                    col1=jsonChildNode.getString("col1");
+                                     val1=jsonChildNode.getString("val1");
+                                     col2=jsonChildNode.getString("col2");
+                                     val2=jsonChildNode.getString("val2");
+                                     col3=jsonChildNode.getString("col3");
+                                    val3=jsonChildNode.getString("val3");
 
                     }
 
@@ -159,9 +178,10 @@ Amount_paid.setVisibility(View.GONE);
             Map<String, String> params = new HashMap<String, String>();
             char id =Member.getText().toString().charAt(0);
 
-            String sql="SELECT  Ifnull( (sum( if( `transactiontype` = 'Loan'AND transactionoption='Borrow',(amount), 0 ) )" +
-                    "- sum( if(  `transactiontype` = 'Loan' AND transactionoption='Payment' ,(amount), 0 ) ) )  ,0)    AS `loanbalance`,Ifnull( (sum( if( `transactiontype` = 'Loan'AND transactionoption='Borrow',(amount), 0 ) )),0) " +
-                    "  AS `totalloan` FROM `loans` WHERE    `memberid`='"+id+"' ORDER BY ref DESC LIMIT 1";
+            String sql="SELECT `loanid`,`guarantor`,`repaymentperiod`,`col1`,`val1`,`col2`,`val2`,`col3`,`val3` ,Ifnull( (sum( if( `transactiontype` = 'Loan' and  `memberid`='"+memidno+"' AND transactionoption='Borrow'  and  `Active`='active',(amount), 0 ) )\n" +
+                    "                    - sum( if(  `transactiontype` = 'Loan' AND transactionoption='Payment' and  `memberid`='"+memidno+"' and `Active`='active',(amount), 0 ) ) )  ,0)    AS `loanbalance`,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `loans` where    `memberid`='"+memidno+"' and `Active`='active' and `transactiontype`='Loan' " +
+                    "and `transactionoption`='Borrow' ORDER BY ref ASC LIMIT 1),0) AS DateDiff,Ifnull( (sum( if( `transactiontype` = 'Loan'AND transactionoption='Borrow' and   `memberid`='"+memidno+"' and `Active`='active' ,(amount), 0 ) )),0) \n" +
+                    "                      AS `totalloan` FROM `loans` WHERE    `memberid`='"+memidno+"' ORDER BY ref DESC LIMIT 1";
 
 
 
@@ -205,9 +225,9 @@ System.out.println(response);
               char id =Member.getText().toString().charAt(0);
 
 
-              String sql1= "update loans set status= 'paid' where `loanid`='1/SES1/2019' and `memberid`='"+id+"' and `status`='waiting';" ;
-              String sql2="insert into loans(`account`,`amount`,`loanid`,`memberid`,`transactionoption`,`transactiontype`,`next_payment`,`repayment`,`status`) VALUES('Savings','"+Amount_paid.getText().toString()+"','1/SES1/2019','"+id+"'" +
-                      ",'Payment','Loan','"+nextpaymentdate.getText().toString()+"','"+getcurrentdate()+"','waiting');" ;
+              String sql1= "update loans set status= 'paid' where `loanid`='"+Loan_ID.getText().toString()+"' and `memberid`='"+memidno+"' ;" ;
+              String sql2="insert into loans(`account`,`amount`,`loanid`,`memberid`,`transactionoption`,`transactiontype`,`next_payment`,`repayment`,`status`,`guarantor`) VALUES('Savings','"+Amount_paid.getText().toString()+"','"+Loan_ID.getText().toString()+"','"+memidno+"'" +
+                      ",'Payment','Loan','"+nextpaymentdate.getText().toString()+"','"+getcurrentdate()+"','waiting','"+guarantor+"')" ;
 
 
               System.out.println("maxi"+sql1+sql2);
@@ -235,84 +255,33 @@ getloanbalances();
         submitloanetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updatebalances();
-             //  nextrepayment();
+                Toast.makeText(getContext(), String.valueOf(repaymentperiod) +String.valueOf(datediffrence), Toast.LENGTH_SHORT).show();
+              Double totalintrests = repaymentperiod*0.1*itialloan;
+              Double amountpayablemonthly=totalintrests/repaymentperiod;
+              Double amountremnaing=outstandingloan+totalintrests;
+                Double paymentmade=Double.parseDouble(Amount_paid.getText().toString());
+                if(amountremnaing>0) {
+                    if (paymentmade < amountpayablemonthly) {
+                        builder("The minimum you can pay is" + amountpayablemonthly);
+                    } else if (paymentmade > amountremnaing) {
+                        builder("The maximum payable is " + amountremnaing);
+                    } else if (repaymentperiod <= datediffrence && paymentmade < amountremnaing) {
+                        builder("It is  " + datediffrence + " month/s since you application please clear balances " + amountremnaing);
+                    }
+                    else{
+                        updatebalances();
+                    }
+                }
+                else{
+                    builder("you have no loan balances");
+                }
+
+                Toast.makeText(getContext(), String.valueOf(itialloan), Toast.LENGTH_SHORT).show();
+
             }
         });
   }
 
-  public String checkdupdate(){
-
-
-      StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
-          @Override
-          public void onResponse(String response) {
-              //  Log.d(TAG,response);
-              System.out.println(response);
-              try {
-                  System.out.println(response);
-                  JSONObject jsonObject = new JSONObject(response);
-                  System.out.println(response);
-                  boolean success = jsonObject.getBoolean("status");
-                  if (success) {
-                      //set this to the spinner
-
-                      JSONArray jsonMainNode = jsonObject.optJSONArray("data");
-                      for (int i = 0; i < jsonMainNode.length(); i++) {
-                          JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
-
-
-if(jsonChildNode.getString("nextrepayment").equalsIgnoreCase("due")){
-    New_Outstanding.setText("Next payment date:  " + jsonChildNode.getString("nextrepayment"));
-
-}
-else{
-                              New_Outstanding.setText("Next payment date:  " + jsonChildNode.getString("next_payment"));
-
-
-                          }
-                      }
-
-                  }
-              } catch (JSONException e) {
-                  e.printStackTrace();
-              }
-
-
-
-          }
-      }, new Response.ErrorListener() {
-          @Override
-          public void onErrorResponse(VolleyError error) {
-              Toast.makeText(getContext(), "Error while reading nertwork", Toast.LENGTH_SHORT).show();
-
-          }
-      }) {
-          @Override
-          protected Map<String, String> getParams() throws AuthFailureError {
-              Map<String, String> params = new HashMap<String, String>();
-
-              char id =Member.getText().toString().charAt(0);
-
-
-              String sql="SELECT     next_payment  ,if( `memberid`='"+id+"' AND `next_payment`<='"+getcurrentdate()+"' and `status`='waiting','due' ,'paid')  AS `nextrepayment` " +
-                      "FROM `loans` WHERE    `memberid`='"+id+"' and `status`='waiting' order BY ref DESC LIMIT 1";
-
-              System.out.println(sql);
-
-
-
-              params.put("function", "getresult");
-              params.put("sql",sql);
-
-
-
-              return params;
-          }
-      };
-      MySingleton.getInstance(getContext()).addToRequestQueue(stringRequest);
-        return  null;
-  }
 
 
 public String getcurrentdate(){
@@ -359,6 +328,38 @@ public String getcurrentdate(){
 
         nextpaymentdate.setText(sdf.format(myCalendar.getTime()));
     }
+
+
+
+    public Double[] checkloanpayment(Double rpaymentperiod,Double loanbalances,Double initialamount){
+        Toast.makeText(getContext(), String.valueOf(rpaymentperiod), Toast.LENGTH_SHORT).show();
+        Double intrest=0.1*initialamount;
+
+
+        Double totalintrest=(0.1* initialamount)*rpaymentperiod;
+
+        Double remaining=totalintrest +loanbalances;
+
+        Double[] arr={intrest,totalintrest,remaining};
+
+
+
+        return arr;
+
+    }
+
+    public void builder(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(message).setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+
+            }
+        })
+                .setNegativeButton("Cancel",null).create().show();
+    }
+
 
 
 

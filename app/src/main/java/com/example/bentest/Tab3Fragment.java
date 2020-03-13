@@ -1,6 +1,7 @@
 package com.example.bentest;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -27,6 +28,8 @@ import static com.example.bentest.LoanApplicationForm.memid;
 import static com.example.bentest.Tab1Fragment.autoCompleteTextView;
 import static com.example.bentest.Tab1Fragment.etamount;
 import static com.example.bentest.Tab2Fragment.guarontorid;
+import static com.example.bentest.Tab2Fragment.idno;
+import static com.example.bentest.Tab1Fragment.loanid;
 
 
 public class Tab3Fragment extends Fragment {
@@ -52,9 +55,8 @@ public class Tab3Fragment extends Fragment {
         //Displaying EditText Error
         process = (Button)view.findViewById(R.id.processbutton);
         col1 = (EditText) view.findViewById(R.id.col1);
-        col1.setError("Required");
         val1 = (EditText) view.findViewById(R.id.col1a);
-        val1.setError("Required");
+      //  val1.setError("Required");
         val2 = (EditText) view.findViewById(R.id.col2a);
         val3 = (EditText) view.findViewById(R.id.col3a);
         col2 = (EditText) view.findViewById(R.id.col2);
@@ -63,7 +65,19 @@ public class Tab3Fragment extends Fragment {
         process.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(col1.getText().toString().equalsIgnoreCase("") || val1.getText().toString().equalsIgnoreCase("")){
 
+                  bbulder("column one has empty fields");
+
+                }
+                else if(col2.getText().toString().equalsIgnoreCase("")|| val2.getText().toString().equalsIgnoreCase("")){
+                    bbulder("column two has empty fields");
+
+                }
+                else if(col3.getText().toString().equalsIgnoreCase("") ||val3.getText().toString().equalsIgnoreCase("")){
+
+                bbulder("column three has empty fields");}
+else{
                 Response.Listener<String> responseListener1 = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -107,15 +121,26 @@ public class Tab3Fragment extends Fragment {
 
                 String account = null;
                 String sql = "INSERT INTO `seskenya`.`loans` " +
-                        "(`Memberid`, `guarantor`, `transactiontype`,`transactionoption`, `account`, `col1`, `val1`,`col2`, `val2`,`col3`, `val3`, `amount`,`next_payment`,`repayment`,`status`)" +
-                        " VALUES ('"+memid+"', '"+guarontorid+"', 'Loan','Borrow', '"+account+"', '"+col1.getText().toString()+"', '"+val1.getText().toString()+"', '"+col2.getText().toString()+"', '"+val2.getText().toString()+"', '"+col3.getText().toString()+"', '"+val3.getText().toString()+"','"+ etamount.getText().toString()+"','"+((LoanApplicationForm)getActivity()).adddates(1)+"','"+((LoanApplicationForm)getActivity()).adddates(0)+"','waiting');";
+                        "(`Memberid`, `guarantor`, `transactiontype`,`transactionoption`, `account`,`loanId`, `col1`, `val1`,`col2`, `val2`,`col3`, `val3`, `amount`,`next_payment`,`repayment`,`status`)" +
+                        " VALUES ('"+memid+"', '"+guarontorid+"', 'Loan','Borrow', '"+account+"','"+loanid.getText().toString()+"', '"+col1.getText().toString()+"', '"+val1.getText().toString()+"', '"+col2.getText().toString()+"', '"+val2.getText().toString()+"', '"+col3.getText().toString()+"', '"+val3.getText().toString()+"','"+ etamount.getText().toString()+"','"+((LoanApplicationForm)getActivity()).adddates(1)+"','"+((LoanApplicationForm)getActivity()).adddates(0)+"','waiting');";
                 String function = "action";
                 ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                 RequestQueue requestQueue = Volley.newRequestQueue(getContext());
                 requestQueue.add(driverLoginRequest);
-            }
+            }}
         });
 
         return view;
+    }
+
+    public  void bbulder(String message){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage(message).setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).create().show();
+
     }
 }

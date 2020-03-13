@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
-            android:text="@string/loan_details"
+            android:hint="@string/loan_details"
             android:textAlignment="center"
             android:textColor="#fff"
             android:textSize="30sp"
@@ -28,38 +28,73 @@
             android:typeface="sans"
             app:fontFamily="sans-serif-light" />
 
-        <TextView
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+
+        <EditText
+            android:enabled="false"
             android:id="@+id/textView12"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
             android:layout_marginTop="15sp"
-            android:text="@string/loan_id"
+            android:textColor="@color/fadedblack"
+            android:hint="@string/loan_id"
             android:textSize="18sp" />
-
-        <TextView
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+        <EditText
             android:id="@+id/textView15"
+            android:enabled="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15sp"
-            android:text="@string/member"
+            android:inputType="textEmailAddress"
+            android:textColor="@color/fadedblack"
+            android:background="@android:color/transparent"
+            android:hint="@string/member"
             android:textSize="18sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+        <EditText
             android:id="@+id/textView16"
+            android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15sp"
-            android:text="@string/loan_amount"
-            android:textSize="18sp" />
-
-        <TextView
+            android:enabled="false"
+            android:textColor="@android:color/black"
+            android:hint="@string/loan_amount"
+            android:textSize="30sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+        <EditText
             android:id="@+id/textView17"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15sp"
-            android:text="@string/outstanding_amount"
-            android:textSize="18sp" />
-
+            android:textColor="@android:color/holo_purple"
+            android:layout_marginTop="20sp"
+            android:enabled="false"
+            android:background="@android:color/transparent"
+            android:hint="@string/outstanding_amount"
+            android:textColorHint="@android:color/holo_purple"
+            android:textSize="25sp" />
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <LinearLayout
@@ -69,6 +104,8 @@
         android:layout_marginTop="30dp"
         android:layout_marginRight="20dp"
         android:orientation="vertical">
+
+
 
         <TextView
             android:id="@+id/textView19"
@@ -83,14 +120,24 @@
             android:typeface="sans"
             app:fontFamily="sans-serif-light" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
         <EditText
             android:id="@+id/Amount_repaid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:ems="10"
+
             android:hint="@string/amount_repaid"
             android:inputType="number" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
         <EditText
             android:id="@+id/next_repayemnt"
             android:layout_width="match_parent"
@@ -99,6 +146,7 @@
             android:ems="10"
             android:hint="date of next meeting"
             android:inputType="date" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/amountdue"
@@ -108,7 +156,7 @@
             android:text="@string/new_outstanding"
             android:textSize="24sp"
             android:textColor="#9C27B0"
-
+android:visibility="gone"
             android:textAlignment="center"
             android:textStyle="bold" />
 
@@ -117,6 +165,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:background="@color/buttoncolour"
+            android:textColor="@android:color/white"
             android:text="@string/submit" />
     </LinearLayout>
 
@@ -127,22 +177,6 @@
         android:orientation="horizontal"
         style="?android:attr/buttonBarStyle">
 
-        <Button
-            android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/colorAccent"
-            android:text="@android:string/cancel"
-            android:textColor="#ffffff" />
 
-        <Button
-            android:id="@+id/button5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/residence"
-            android:backgroundTint="@android:color/holo_green_dark"
-            android:textColor="#ffffff"/>
     </LinearLayout>
 </LinearLayout>

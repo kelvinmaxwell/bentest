@@ -116,7 +116,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="4dp"
-        app:layout_constraintTop_toBottomOf="@+id/advance_id">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lNameLayoutAvailable2">
 
         <EditText
             android:id="@+id/totalsaving"
@@ -149,7 +150,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="4dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lNameLayoutguarantor">
 
         <EditText
@@ -227,6 +227,7 @@
         android:drawableLeft="@drawable/processloan"
         android:onClick="PayAdvance"
         android:text="Process"
+        android:background="@color/buttoncolour"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:theme="@style/Button1Style"
@@ -247,6 +248,7 @@
         android:layout_marginRight="32dp"
         android:drawableLeft="@drawable/undo"
         android:text="Back"
+        android:background="@color/buttoncolour"
         android:textColor="@android:color/white"
         android:theme="@style/Button2Style"
         app:layout_constraintEnd_toStartOf="@+id/button"
@@ -267,16 +269,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/advance_id"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/lNameLayoutAvailable2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        tools:layout_editor_absoluteX="59dp"
-        tools:layout_editor_absoluteY="278dp"
-        app:layout_constraintTop_toBottomOf="@+id/lNameLayout1"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lNameLayout1">
+
+
+        <EditText
+            android:id="@+id/advance_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginStart="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:inputType="textPersonName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            android:hint="Advance_id"
+
+
+            tools:layout_editor_absoluteX="59dp" />
+    </com.google.android.material.textfield.TextInputLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

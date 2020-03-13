@@ -64,6 +64,8 @@ Button back;
 
     ArrayList<java.lang.String> Members = new ArrayList<>();
     ArrayList<java.lang.String> MemberGroups = new ArrayList<>();
+    ArrayList<java.lang.String> accountschoose = new ArrayList<>();
+
     java.lang.String function = "";
     java.lang.String StringPassed = "";
     ActionRequest driverLoginRequest;
@@ -85,6 +87,10 @@ public  EditText advanceid;
 
     java.lang.String[] String = new String[]{
             "Repayment Period","1", "2","3"
+    };
+
+    java.lang.String[] String2 = new String[]{
+            "Please select accounts.....","SAVINGS", "EDUCATION"
     };
 
     java.lang.String excecutingcategory = "";
@@ -125,16 +131,46 @@ backpress();
 
 
     public void accountselectspinner(){
-        adapter= ArrayAdapter.createFromResource(this,R.array.accaounts,android.R.layout.simple_spinner_item); adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        List<java.lang.String> plantsList = new ArrayList<>(Arrays.asList(String2));
+        final ArrayAdapter<java.lang.String> adapter = new ArrayAdapter<java.lang.String>(
+                getApplicationContext(), R.layout.support_simple_spinner_dropdown_item,plantsList) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0) {
+
+                    tv.setTextColor(Color.GRAY);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+
+
+
         chooseaccounts.setAdapter(adapter);
         chooseaccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
 
-                if (!parent.getItemAtPosition(position).toString().equalsIgnoreCase("Please select accounts..............")) {
+                    MemberGroups.clear();
                     savings();
-                }
+
 
             }
 
@@ -685,9 +721,8 @@ bbulder("Your not qualified for an advance because you have an existing loan. Pl
                                 "                       (SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' " +
                                 "                                    AND memberid='" + Selectedmember + "')),0) AS availableforfortakingadvance,     Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
                                 "YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) ) )  ,0) as topupamounts ," +
-                                " IF((select `type_id` from transactions where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),(select `type_id` from transactions   where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),ifnull( (select CONCAT(ref+1,'/', YEAR(CURDATE()),'/','"+Selectedmember+"','Adv') from transactions\n" +
-                                "                                 where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' ORDER by ref DESC LIMIT 1),CONCAT(sum(0+1),'/', YEAR(CURDATE()),'/','1','Adv')))as advanceid FROM `transactions` " +
-                                "WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "'  AND  transactions.`memberid`='" + Selectedmember + "' ORDER by ref DESC LIMIT 1";
+                                " IF((select `type_id` from transactions where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1)is not null,(select `type_id` from transactions   where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),ifnull( (select CONCAT(ref+1,'/', YEAR(CURDATE()),'/','"+Selectedmember+"','Adv') from transactions\n" +
+                                "                                 where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' ORDER by ref DESC LIMIT 1),CONCAT(sum(0+1),'/', YEAR(CURDATE()),'/','1','Adv')))as advanceid  from `transactions`";
 
                         HashMap postData = new HashMap();
                         postData.put("function", "query");
@@ -778,9 +813,8 @@ bbulder("Your not qualified for an advance because you have an existing loan. Pl
                             "                       (SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' " +
                             "                                    AND memberid='" + Selectedmember + "')),0) AS availableforfortakingadvance,     Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
                             "YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) ) )  ,0) as topupamounts ," +
-                            " IF((select `type_id` from transactions where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),(select `type_id` from transactions   where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),ifnull( (select CONCAT(`ref`+1,'/', YEAR(CURDATE()),'/','"+Selectedmember+"','Adv') from transactions\n" +
-                            "                                 where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' ORDER by ref DESC LIMIT 1),CONCAT(sum(0+1),'/', YEAR(CURDATE()),'/','1','Adv')))as advanceid FROM `transactions` " +
-                            "WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "'  AND  transactions.`memberid`='" + Selectedmember + "' ORDER by ref DESC LIMIT 1";
+                            " IF((select `type_id` from transactions where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1) is not null,(select `type_id` from transactions   where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),ifnull( (select CONCAT(`ref`+1,'/', YEAR(CURDATE()),'/','"+Selectedmember+"','Adv') from transactions\n" +
+                            "                                 where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' ORDER by ref DESC LIMIT 1),CONCAT(sum(0+1),'/', YEAR(CURDATE()),'/','1','Adv')))as advanceid FROM `transactions` ;" ;
 
                     HashMap postData = new HashMap();
                     postData.put("function", "query");

@@ -41,7 +41,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spinner">
@@ -69,29 +69,34 @@
             app:layout_constraintTop_toBottomOf="@+id/spinner" />
 
     </com.google.android.material.textfield.TextInputLayout>
-
-    <EditText
-        android:id="@+id/advance_id"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/Membernu4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lNameLayout1"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@+id/lNameLayout1">
 
+        <EditText
+            android:id="@+id/advance_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ems="10"
+            android:hint="Advance id"
+            android:inputType="textPersonName"
+            app:layout_constraintStart_toStartOf="parent"
+
+            tools:visibility="visible" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/lNameLayouttotasavings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/advance_id">
+        app:layout_constraintTop_toBottomOf="@+id/Membernu4">
 
         <EditText
             android:id="@+id/TotalSavings"
@@ -187,7 +192,7 @@
         android:id="@+id/Spinnerrepaymentperiod"
         android:layout_width="395dp"
         android:layout_height="40dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -199,17 +204,16 @@
         android:id="@+id/button"
         android:layout_width="162dp"
         android:layout_height="51dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/buttoncolour"
         android:drawableLeft="@drawable/processloan"
         android:onClick="SaveSavings"
+
         android:text="Process"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:theme="@style/Button1Style"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnTEST2"
         app:layout_constraintTop_toBottomOf="@+id/Spinnerrepaymentperiod" />
 
     <Button
@@ -219,15 +223,12 @@
         android:layout_height="51dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:background="@color/buttoncolour"
         android:drawableLeft="@drawable/undo"
         android:onClick="backtomainpage"
         android:text="Back"
         android:textColor="@android:color/white"
-        android:theme="@style/Button2Style"
         app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

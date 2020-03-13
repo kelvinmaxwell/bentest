@@ -8,12 +8,11 @@
     tools:context=".CollateralFragment">
 
     <TextView
-        android:id="@+id/textView20"
-        android:layout_width="504dp"
+        android:id="@+id/totalcol"
+        android:layout_width="match_parent"
         android:layout_height="37dp"
-        android:layout_marginTop="520dp"
+        android:layout_marginTop="472dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
         android:background="#1B6D09"
         android:text="Total Colateral"
         android:textAlignment="center"
@@ -22,20 +21,18 @@
         android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.178"
+        app:layout_constraintHorizontal_bias="0.207"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_conversion_wrapHeight="50"
         tools:layout_conversion_wrapWidth="154" />
 
     <LinearLayout
-        android:layout_width="395dp"
-        android:layout_height="504dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_width="326dp"
+        android:layout_height="376dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="98dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,7 +48,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Colateral 1"
                 android:textColor="#710A83"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -61,9 +57,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#4C025C"
-                android:text="Value 1"
-                android:textColor="#fff"
+
+                android:textColor="@color/textback"
                 android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -79,7 +74,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Colateral 2"
                 android:textColor="#710A83"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -89,9 +83,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#4C025C"
-                android:text="Value 2"
-                android:textColor="#fff"
+                android:textColor="@color/textback"
                 android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -107,7 +99,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Colateral 3"
                 android:textColor="#710A83"
                 android:textSize="24sp"
                 android:textStyle="bold" />
@@ -117,9 +108,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#4C025C"
-                android:text="Value 3"
-                android:textColor="#fff"
+                android:textColor="@color/textback"
                 android:textSize="24sp"
                 android:textStyle="bold" />
         </LinearLayout>

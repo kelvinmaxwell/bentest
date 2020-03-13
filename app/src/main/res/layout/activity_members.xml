@@ -11,6 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout4"
             android:layout_width="414dp"
@@ -217,13 +219,13 @@ android:textColor="@android:color/black"
             <TextView
                 android:id="@+id/EDUCATION"
                 android:layout_width="413dp"
-                android:layout_height="24dp"
+                android:layout_height="0dp"
                 android:layout_marginTop="5dp"
 
-                android:text="EDUCATION"
-                android:textColor="@android:color/white"
-                android:textAlignment="center"
                 android:background="@android:color/black"
+                android:text="EDUCATION"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardview3" />
             <androidx.cardview.widget.CardView
@@ -317,6 +319,7 @@ android:textColor="@android:color/black"
 
 
 
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -329,6 +332,17 @@ android:textColor="@android:color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/constraintLayout4"
             tools:layout_editor_absoluteY="598dp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar3"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="119dp"
+            android:layout_height="139dp"
+            android:layout_marginEnd="144dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.306" />
 
 
 

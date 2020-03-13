@@ -1,34 +1,27 @@
 
 package com.example.bentest;
 
-        import android.graphics.Color;
+        import android.app.DownloadManager;
+        import android.content.Intent;
         import android.os.Bundle;
+
+        import androidx.appcompat.app.AppCompatActivity;
+        import androidx.appcompat.widget.Toolbar;
+
+        import android.util.Log;
+        import android.view.View;
+        import android.widget.AdapterView;
+        import android.widget.ListView;
+        import android.widget.ProgressBar;
+        import android.widget.Toast;
 
         import com.android.volley.AuthFailureError;
         import com.android.volley.Request;
         import com.android.volley.Response;
         import com.android.volley.VolleyError;
+        import com.android.volley.VolleyLog;
+        import com.android.volley.toolbox.JsonArrayRequest;
         import com.android.volley.toolbox.StringRequest;
-        import com.github.mikephil.charting.charts.BarChart;
-        import com.github.mikephil.charting.charts.PieChart;
-        import com.github.mikephil.charting.components.AxisBase;
-        import com.github.mikephil.charting.components.XAxis;
-        import com.github.mikephil.charting.data.BarData;
-        import com.github.mikephil.charting.data.BarDataSet;
-        import com.github.mikephil.charting.data.BarEntry;
-        import com.github.mikephil.charting.data.PieData;
-        import com.github.mikephil.charting.data.PieDataSet;
-        import com.github.mikephil.charting.data.PieEntry;
-        import com.github.mikephil.charting.formatter.IAxisValueFormatter;
-        import com.github.mikephil.charting.utils.ColorTemplate;
-        import com.google.android.material.floatingactionbutton.FloatingActionButton;
-        import com.google.android.material.snackbar.Snackbar;
-
-        import androidx.appcompat.app.AppCompatActivity;
-        import androidx.appcompat.widget.Toolbar;
-
-        import android.view.View;
-        import android.widget.Toast;
 
         import org.json.JSONArray;
         import org.json.JSONException;
@@ -36,33 +29,35 @@ package com.example.bentest;
 
         import java.util.ArrayList;
         import java.util.HashMap;
+        import java.util.List;
         import java.util.Map;
 
-public class groups extends AppCompatActivity  implements IAxisValueFormatter {
-    PieChart pieChart;
-    PieData pieData;
-    PieDataSet pieDataSet;
-    ArrayList pieEntries;
-    ArrayList PieEntryLabels;
-    BarChart barChart;
-    BarData barData;
-    BarDataSet barDataSet;
-    ArrayList barEntries;
+        import static com.example.bentest.MainActivity.memidno;
+
+public class groups extends AppCompatActivity {
+    private CustomListAdapter adapter;
+    private List<groupsclass> movieList = new ArrayList<groupsclass>();
+    private ListView listView;
+    ProgressBar pgr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_groups);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        barChart = findViewById(R.id.BarChart);
+        listView = (ListView) findViewById(R.id.list);
+        adapter = new CustomListAdapter(this, movieList);
+        listView.setAdapter(adapter);
+        pgr=findViewById(R.id.progressBar);
+        getlistview();
+        pgr.setVisibility(View.VISIBLE);
 
-        getmembersdetails();
 
     }
 
-    public void getmembersdetails(){
 
-
+    public void getlistview(){
         StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -71,42 +66,26 @@ public class groups extends AppCompatActivity  implements IAxisValueFormatter {
                 try {
                     System.out.println(response);
                     JSONObject jsonObject = new JSONObject(response);
-                    System.out.println(response);
+
                     boolean success = jsonObject.getBoolean("status");
                     if (success) {
                         //set this to the spinner
 
                         JSONArray jsonMainNode = jsonObject.optJSONArray("data");
                         for (int i = 0; i < jsonMainNode.length(); i++) {
-                            JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
 
-                            int savingcount=jsonChildNode.getInt("savingcount");
-                            int Advancecount=jsonChildNode.getInt("Advancecount");
-                            int loanscount=  jsonChildNode.getInt ("loanscount");
-                            //  fromdetails.setText("form1:   Form2:  Form3:   Form4:  Absent:" + absent+"/"+totals);
-                            //  movie.setYear(dataobj.getString("date"));
+                            JSONObject obj = jsonMainNode.getJSONObject(i);
 
 
-
-
-                            barEntries = new ArrayList<>();
-
-                            //int totalsi=Integer.parseInt(k);
-                            barEntries.add(new BarEntry(1f, savingcount,"meru"));
-                            barEntries.add(new BarEntry(3f,Advancecount));
-                            barEntries.add(new BarEntry(4f, loanscount));
-                            barDataSet = new BarDataSet(barEntries, "Data");
-                            barData = new BarData(barDataSet);
-                            barChart.setData(barData);
-                            barDataSet.setColors(ColorTemplate.JOYFUL_COLORS);
-                            barDataSet.setValueTextColor(Color.BLACK);
-                            barDataSet.setValueTextSize(18f);
-                            barChart.animateX(5000);
-
-
-
+                            groupsclass movie = new groupsclass();
+                            movie.setTitle(obj.getString("name"));
+                            movie.setPrice(obj.getString("id"));
+                            movie.setRating(obj.getString("Total"));
+                            movieList.add(movie);
+                            pgr.setVisibility(View.GONE);
 
                         }
+                        adapter.notifyDataSetChanged();
 
                     }
                 } catch (JSONException e) {
@@ -126,11 +105,8 @@ public class groups extends AppCompatActivity  implements IAxisValueFormatter {
                 Map<String, String> params = new HashMap<String, String>();
 
 
-                String sql="SELECT (select count(*) from transactions where account='SAVINGS') " +
-                        "as savingcount,(select count(*) from transactions where account='EDUCATION')" +
-                        " as Advancecount,(select count(*) from loans " +
-                        "where status='waiting' and transactionoption='Borrow') as loanscount";
-
+                String sql="SELECT groups.id, groups.name, COUNT(members.group) AS" +
+                        " Total FROM groups LEFT JOIN members ON groups.id = members.group GROUP BY groups.id,groups.name";
 
 
 
@@ -143,21 +119,14 @@ public class groups extends AppCompatActivity  implements IAxisValueFormatter {
                 return params;
             }
         };
-        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        AppController.getInstance().addToRequestQueue(stringRequest);
 
 
 
-    }
-    public void LabelFormatter(String[] labels) {
-        final ArrayList<String> xAxisLabel = new ArrayList<>();
-        xAxisLabel.add("label1");
-        xAxisLabel.add("Label2");
-        xAxisLabel.add("label 3");
 
     }
 
-    @Override
-    public String getFormattedValue(float value, AxisBase axis) {
-        return null;
     }
-}
+
+
+

@@ -21,7 +21,7 @@
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginRight="0dp"
-        android:layout_marginBottom="-8dp"
+        android:layout_marginBottom="-12dp"
         android:orientation="vertical">
 
         <Spinner
@@ -31,16 +31,15 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
 
-
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_margin="14dp"
-            android:layout_marginEnd="14dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="3dp"
             android:paddingBottom="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/editText"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <AutoCompleteTextView
             android:id="@+id/editText"
@@ -48,11 +47,11 @@
             android:layout_height="42dp"
 
             android:layout_margin="14dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="3dp"
             android:ems="10"
             android:hint="Member name/Id"
             android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/Spinner2"
+            app:layout_constraintTop_toBottomOf="@+id/Spinner"
             tools:layout_editor_absoluteX="14dp" />
 
         <requestFocus
@@ -73,27 +72,45 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_margin="14dp"
-            android:layout_marginBottom="10dp"
             android:paddingBottom="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/textView11"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText" />
 
         <TextView
             android:id="@+id/textView11"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="14dp"
+            android:layout_marginEnd="14dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="0dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="18sp"
+            app:fontFamily="@font/mandali"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Spinner2" />
+
+        <TextView
+            android:id="@+id/loanid"
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_margin="14dp"
-            android:layout_marginBottom="10dp"
             android:paddingTop="5dp"
             android:paddingBottom="0dp"
             android:textColor="@color/colorPrimary"
             android:textSize="18sp"
             app:fontFamily="@font/mandali"
-            app:layout_constraintBottom_toTopOf="@+id/editText2"
-            tools:layout_editor_absoluteX="14dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
 
         <EditText
@@ -101,12 +118,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="14dp"
-            android:layout_marginBottom="10dp"
             android:ems="10"
             android:hint="Amt Required"
             android:inputType="number"
-            app:layout_constraintBottom_toTopOf="@+id/Spinner3"
-            tools:layout_editor_absoluteX="14dp" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loanid" />
 
         <Spinner
             android:id="@+id/Spinner3"
@@ -117,11 +133,10 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_margin="14dp"
-            android:layout_marginStart="14dp"
-            android:layout_marginBottom="95dp"
+            android:layout_marginTop="64dp"
             android:paddingBottom="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/btnTEST"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editText2" />
 
 
         <Button
@@ -131,11 +146,13 @@
             android:layout_height="53dp"
 
             android:layout_alignParentBottom="true"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:drawableLeft="@drawable/undo"
             android:text="Back"
+            android:visibility="gone"
             android:theme="@style/Button2Style"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/Spinner3" />
 

@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
-      
-    <color name="colorPrimary">#00574B</color>
-    <color name="navigationBarColor">#000000</color>
+    <color name="colorPrimaryDark">#5F0470</color>
+    <color name="colorAccent">#BE31D8</color>
+    <color name="fadedblack">#1F0227</color>
 
+
+      
+    <color name="colorPrimary">#B057C2</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="genre">#666666</color>
+    <color name="year">#888888</color>
     <color name="black_overlay">#66000000</color>
-    <color name="buttoncolour">#2B7A45</color>
+    <color name="buttoncolour">#650779</color>
     <color name="textback">#272B6E7A</color>
+    <color name="list_divider">#420C4D</color>
+    <color name="list_row_start_color">#ffffff</color>
+    <color name="list_row_end_color">#D57EE7</color>
+    <color name="list_row_hover_start_color">#ebeef0</color>
+    <color name="list_row_hover_end_color">#ebeef0</color>
 </resources>

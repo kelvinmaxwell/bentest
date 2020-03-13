@@ -16,8 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import static com.example.bentest.MainActivity.groupid;
-import static com.example.bentest.MainActivity.memidno;
+import static com.example.bentest.Tab1Fragment.groupid;
+import static com.example.bentest.Tab1Fragment.memidno;
 import static com.example.bentest.Tab1Fragment.account;
 
 
@@ -78,7 +78,7 @@ public class Tab2Fragment extends Fragment {
 
                                 JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                                 Members.add(jsonChildNode.getString("name"));
-                                guarontorid = jsonChildNode.getString("id number");
+                                guarontorid = jsonChildNode.getString("memberid");
 
                             }
 
@@ -95,8 +95,8 @@ public class Tab2Fragment extends Fragment {
                 }
             };
             String function = "query";
-            String sql = "select `id number`, concat(firstname,' ',secondname,' ',surname) as name from members where `group` = '"+7 +"' and memberid != '"+1+"'";
-            System.out.println(sql);
+            String sql = "select `memberid`, concat(firstname,' ',secondname,' ',surname) as name from members where `group` = '"+groupid+"' and `memberid` != '"+memidno+"'";
+            System.out.println("members"+sql);
             ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
             RequestQueue requestQueue = Volley.newRequestQueue(getContext());
             requestQueue.add(driverLoginRequest);
@@ -108,7 +108,7 @@ public class Tab2Fragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            System.out.println("maxi"+response);
+                            System.out.println(response);
                             JSONObject jsonObject = new JSONObject(response);
 
                             boolean success = jsonObject.getBoolean("success");
@@ -123,7 +123,7 @@ public class Tab2Fragment extends Fragment {
                                     balance.setText("Available: KES "+
                                             new DecimalFormat("#,###.##").
                                                     format(jsonChildNode.getDouble("totalsavings")));
-                                    idno.setText(jsonChildNode.getString("id number"));
+                                    idno.setText(jsonChildNode.getString("memberid"));
                                     phone.setText(jsonChildNode.getString("phone"));
                                 }
 
@@ -140,10 +140,11 @@ public class Tab2Fragment extends Fragment {
                     }
                 };
                 String function = "query";
-                String sql = "SELECT `id number`,phone,CONCAT(firstname,' ',secondname,' ',surname) as NAME, " +
-                        "  ifnull(sum( if(  `transactionoption` = 'SAVINGS',(amount), 0 ) ),0) AS `totalsavings` FROM " +
-                        "`transactions` INNER JOIN members ON transactions.memberid = members.memberid  WHERE `account`='"+account+"' and " +
-                        "`id number` = '"+guarontorid+"'";
+                String sql = "SELECT `memberid`,phone,CONCAT(firstname,' ',secondname,' '," +
+                        "surname) as NAME ,ifnull((select sum(`amount`) from `transactions` where `transactionoption`='"+account+"' "
+                        +
+                        " AND `memberid`='"+guarontorid+"'),0) as `totalsavings`" +
+                        " from members  where `memberid` = '"+guarontorid+"'";
                 System.out.println("maxi2"+sql);
                 ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                 RequestQueue requestQueue = Volley.newRequestQueue(getContext());

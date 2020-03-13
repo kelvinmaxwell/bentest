@@ -59,7 +59,7 @@ public class Tab1Fragment extends Fragment {
     static Spinner Spinner3;
     static AutoCompleteTextView autoCompleteTextView;
 
-    static TextView textView;
+    static TextView textView,loanid;
     String StringPassed = "";
     ViewPager viewPager;
     ArrayList<String> Members = new ArrayList<>();
@@ -84,7 +84,7 @@ public class Tab1Fragment extends Fragment {
 
             }
         });
-
+loanid=view.findViewById(R.id.loanid);
         Spinner = (Spinner) view.findViewById(R.id.Spinner);
         etamount = (EditText) view.findViewById(R.id.editText2);
         if(Spinner.getAdapter()==null){
@@ -137,8 +137,7 @@ public class Tab1Fragment extends Fragment {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(getContext(), "failed getting members " + e,
-                                    Toast.LENGTH_LONG).show();
+                           System.out.println(e);
                         }
                     }
                 };
@@ -182,7 +181,7 @@ public class Tab1Fragment extends Fragment {
 
                                         JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                                         Members.add(jsonChildNode.getString("memberid")+" "+jsonChildNode.getString("name"));
-                                        memidno = jsonChildNode.getString("id number");
+                                        memidno = jsonChildNode.getString("memberid");
 
                                     }
 
@@ -193,14 +192,13 @@ public class Tab1Fragment extends Fragment {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), "failed getting members " + e,
-                                        Toast.LENGTH_LONG).show();
+                                System.out.println(e);
                             }
                         }
                     };
                     groupid = selectedItemText.replaceAll("[^\\d]", "");
                     String function = "query";
-                    String sql = "select memberid, `id number`, concat(firstname,' ',secondname,' ',surname) as name from members where `group` = '"+selectedItemText.replaceAll("[^\\d]", "") +"'";
+                    String sql = "select memberid, concat(firstname,' ',secondname,' ',surname) as name from members where `group` = '"+selectedItemText.replaceAll("[^\\d]", "") +"'";
                     System.out.println(sql);
                     ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                     RequestQueue requestQueue = Volley.newRequestQueue(getContext());
@@ -259,7 +257,7 @@ public class Tab1Fragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 account = Spinner2.getItemAtPosition(position).toString();
-
+if(position>0){
 
                     Response.Listener<String> responseListener1 = new Response.Listener<String>() {
                         @Override
@@ -276,6 +274,7 @@ public class Tab1Fragment extends Fragment {
                                     for (int i = 0; i < jsonMainNode.length(); i++) {
 
                                         JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                                        loanid.setText(jsonChildNode.getString("loan_id"));
                                         Members.add(jsonChildNode.getString("totalsavings"));
                                         etamount.setFilters(new InputFilter[]{ new MinMaxFilter("1", Integer.toString(jsonChildNode.getInt("totalsavings")*3))});
                                         Double amountavailable=jsonChildNode.getDouble("totalsavings")*3-jsonChildNode.getDouble("totalloans");
@@ -284,7 +283,7 @@ public class Tab1Fragment extends Fragment {
                                                     new DecimalFormat("#,###.##").
                                                             format(amountavailable));
                                         }
-                                        else if(amountavailable<=0){
+                                        else if(amountavailable<=0 ){
                                             bbulder("You are not qualified");
                                         }
                                     }
@@ -296,25 +295,30 @@ public class Tab1Fragment extends Fragment {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Toast.makeText(getContext(), "failed getting members " + e,
-                                        Toast.LENGTH_LONG).show();
+                               System.out.println(e);
                             }
                         }
                     };
 
                     memid = autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "");
+
                     String function = "query";
                 //    String sql = "SELECT ifnull(sum( if(  `transactiontype` = 'SAVINGS',(amount), 0 ) ),0) AS `totalsavings` FROM `transactions` WHERE `transactiontype`='"+Spinner2.getItemAtPosition(position).toString()+"' and `memberid`='"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"'";
 
-              String sql=  "SELECT ifnull((select sum(amount) from `transactions` where `transactionoption`='SAVINGS' and `transactiontype`='SAVINGS' AND `memberid`='1' and `account`='"+Spinner2.getSelectedItem().toString()+"'order by ref DESC LIMIT 1 ),0) " +
+              String sql=  "SELECT ifnull((select sum(amount) from `transactions` where `transactionoption`='SAVINGS' and `transactiontype`='SAVINGS' AND `memberid`='"+memid+"' and `account`='"+Spinner2.getSelectedItem().toString()+"'order by ref DESC LIMIT 1 ),0) " +
                       "as totalsavings,ifnull((select sum(`amount`) from loans WHERE " +
-                      "`transactionoption`='Borrow' and `transactiontype`='Loan' and `memberid`='"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"' and `status`='waiting'),0) as totalloans";
+                      "`transactionoption`='Borrow' and `transactiontype`='Loan' and `memberid`='"+autoCompleteTextView.getText().toString().replaceAll("[^\\d]", "") +"' and `status`='waiting'),0) as totalloans,IF((select `loanid` " +
+                      "from `loans` where `transactiontype`='Loan' AND `transactionoption`='Borrow' and " +
+                      "`status`='waiting' and `memberid`='"+memid+"' ORDER by `ref` ASC LIMIT 1) is not null,(select `loanid` from `loans`   where `transactiontype`='Loan' AND `transactionoption`='Borrow' and `status`='waiting' and `memberid`='"+memid+"' ORDER by ref ASC LIMIT 1)," +
+                      "ifnull( (select CONCAT(`ref`+1,'/', YEAR(CURDATE()),'/','1','/','LN') " +
+                      "from `loans`   where `transactiontype`='Loan' AND `transactionoption`='Borrow' ORDER by `ref` DESC LIMIT 1), (SELECT CONCAT(sum(0+1),'/', YEAR(CURDATE()),'/','1','/','LN'))))as " +
+                      "loan_id ";
                     System.out.println(sql);
                     ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                     RequestQueue requestQueue = Volley.newRequestQueue(getContext());
                     requestQueue.add(driverLoginRequest);
 
-            }
+            }}
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -323,8 +327,8 @@ public class Tab1Fragment extends Fragment {
 
 
         Spinner3 = (Spinner) view.findViewById(R.id.Spinner3);
-        String = new String[]{"Repayment Period (yrs)", "1", "2", "3","4","5","6" ,"7","8","9","10","11","12","13","14","15","16"
-
+        String = new String[]{"Repayment Period (months)", "1", "2", "3","4","5","6" ,"7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34"
+,"35","36"
         };
 
         List<String> plantsList3 = new ArrayList<>(Arrays.asList(String));

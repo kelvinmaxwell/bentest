@@ -158,7 +158,7 @@ loanstxt=findViewById(R.id.loans);
 
                                                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                                                     Members.add(jsonChildNode.getString("memberid")+" "+jsonChildNode.getString("name"));
-                                                    memidno = jsonChildNode.getString("id number");
+                                                    memidno = jsonChildNode.getString("memberid");
 
                                                 }
 
@@ -186,7 +186,7 @@ loanstxt=findViewById(R.id.loans);
                                 };
                                 groupid = selectedItemText.replaceAll("[^\\d]", "");
                                 String function = "query";
-                                String sql = "select memberid, `id number`, concat(firstname,' ',secondname,' ',surname) as name from members where `group` = '"+selectedItemText.replaceAll("[^\\d]", "") +"'";
+                                String sql = "select memberid,  concat(firstname,' ',secondname,' ',surname) as name from members where `group` = '"+selectedItemText.replaceAll("[^\\d]", "") +"'";
                                 System.out.println(sql);
                                 ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                                 RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);

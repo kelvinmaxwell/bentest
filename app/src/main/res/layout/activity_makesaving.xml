@@ -227,11 +227,12 @@
         android:drawableLeft="@drawable/processloan"
         android:onClick="SaveSavings"
         android:text="Process"
+        android:background="@color/buttoncolour"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:theme="@style/Button1Style"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btnTEST2"
+
         app:layout_constraintTop_toBottomOf="@+id/Spinnerdisbursementmode" />
 
     <Button
@@ -247,8 +248,8 @@
         android:layout_marginRight="32dp"
         android:drawableLeft="@drawable/undo"
         android:text="Back"
+        android:background="@color/buttoncolour"
         android:textColor="@android:color/white"
-        android:theme="@style/Button2Style"
         app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintHorizontal_chainStyle="spread_inside"

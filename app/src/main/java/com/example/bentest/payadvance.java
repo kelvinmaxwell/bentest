@@ -56,6 +56,9 @@ Button back;
             "MPESA",
             "CHEQUE"
     };
+    java.lang.String[] String2 = new String[]{
+            "Please select accounts.....","SAVINGS", "EDUCATION"
+    };
 
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -132,7 +135,7 @@ savings();
     }
 
     public  void savings(){
-
+        MemberGroups.add("Select Group");
         HashMap postData = new HashMap();
         postData.put("function", "query");
         postData.put("StringPassed", "select name from groups");
@@ -638,16 +641,46 @@ public String adddates(int duration){
     }
 
     public void accountselectspinner(){
-        adapter= ArrayAdapter.createFromResource(this,R.array.accaounts,android.R.layout.simple_spinner_item); adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        List<java.lang.String> plantsList = new ArrayList<>(Arrays.asList(String2));
+        final ArrayAdapter<java.lang.String> adapter = new ArrayAdapter<java.lang.String>(
+                getApplicationContext(), R.layout.support_simple_spinner_dropdown_item,plantsList) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0) {
+
+                    tv.setTextColor(Color.GRAY);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+
+
+
         chooseaccounts.setAdapter(adapter);
         chooseaccounts.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
 
-                if (!parent.getItemAtPosition(position).toString().equalsIgnoreCase("Please select accounts..............")) {
-                    savings();
-                }
+                MemberGroups.clear();
+                savings();
+
 
             }
 
@@ -659,7 +692,6 @@ public String adddates(int duration){
 
 
     }
-
     public void backpress(){
         back.setOnClickListener(new View.OnClickListener() {
             @Override
