@@ -132,13 +132,13 @@ public class CollateralFragment extends Fragment {
 
 
                 String sql="SELECT `loanid`,`guarantor`,`repaymentperiod`,`col1`,`val1`,`col2`,`val2`,`col3`,`val3` ,Ifnull( (sum( if( `transactiontype` = 'Loan' and  `memberid`='"+memidno+"' AND transactionoption='Borrow'  and  `Active`='active',(amount), 0 ) )\n" +
-                        "                    - sum( if(  `transactiontype` = 'Loan' AND transactionoption='Payment' and  `memberid`='"+memidno+"' and `Active`='active',(amount), 0 ) ) )  ,0)    AS `loanbalance`,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `loans` where    `memberid`='"+memidno+"' and `Active`='active' and `transactiontype`='Loan' " +
-                        "and `transactionoption`='Borrow' ORDER BY ref ASC LIMIT 1),0) AS DateDiff,Ifnull( (sum( if( `transactiontype` = 'Loan'AND transactionoption='Borrow' and   `memberid`='"+memidno+"' and `Active`='active' ,(amount), 0 ) )),0) \n" +
-                        "                      AS `totalloan`,ifnull((SELECT sum(`val1`+`val2`+`val3`)from `loans` where `transactiontype` = 'Loan' and  `memberid`='"+memidno+"' AND transactionoption='Borrow'  and  `Active`='active'),0)as `total` FROM `loans` WHERE    `memberid`='"+memidno+"' and `Active`='active' ORDER BY ref DESC LIMIT 1";
+                        "                    - sum( if(  `transactiontype` = 'Loan' AND transactionoption='Payment' and  `memberid`='"+memidno+"' and `status`='waiting',(amount), 0 ) ) )  ,0)    AS `loanbalance`,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `loans` where    `memberid`='"+memidno+"' and `status`='waiting' and `transactiontype`='Loan' " +
+                        "and `transactionoption`='Borrow' ORDER BY ref ASC LIMIT 1),0) AS DateDiff,Ifnull( (sum( if( `transactiontype` = 'Loan'AND transactionoption='Borrow' and   `memberid`='"+memidno+"' and `status`='waiting' ,(amount), 0 ) )),0) \n" +
+                        "                      AS `totalloan`,ifnull((SELECT sum(`val1`+`val2`+`val3`)from `loans` where `transactiontype` = 'Loan' and  `memberid`='"+memidno+"' AND transactionoption='Borrow'  and  `status`='waiting'),0)as `total` FROM `loans` WHERE    `memberid`='"+memidno+"' and `status`='waiting' ORDER BY ref DESC LIMIT 1";
 
 
 
-
+System.out.println(sql);
 
                 params.put("function", "getresult");
                 params.put("sql",sql);

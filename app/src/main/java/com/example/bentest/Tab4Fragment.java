@@ -26,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.example.bentest.LoanApplicationForm.memid;
+import static com.example.bentest.Tab1Fragment.Selectedmember;
 
 
 
@@ -91,7 +92,7 @@ public class Tab4Fragment extends Fragment {
 
             }
         };
-String sql = "SELECT * FROM members WHERE memberid = '"+memid+"'";
+String sql = "SELECT * FROM members WHERE memberid = '"+Selectedmember+"'";
         ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php","query",sql,responseListener);
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(driverLoginRequest);
@@ -137,7 +138,7 @@ String sql = "SELECT * FROM members WHERE memberid = '"+memid+"'";
         String Location =  location.getText().toString();
         String Sublocation =  sublocation.getText().toString();
 
-String sql = "UPDATE members set address = '"+Address+"', county = '"+County+"', town = '"+Town+"', location = '"+Location+"', sublocation = '"+Sublocation+"' where `id number` = '"+memid+"'";
+String sql = "UPDATE members set address = '"+Address+"', county = '"+County+"', town = '"+Town+"', location = '"+Location+"', sublocation =  '"+Sublocation+"' where `id number` = '"+memid+"'";
         ActionRequest recordOffence = new ActionRequest("dbqueries.php","action",sql,responseListener);
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(recordOffence);

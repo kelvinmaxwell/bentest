@@ -49,6 +49,8 @@ public class LoanApplicationForm extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         viewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(viewPager);
@@ -119,6 +121,12 @@ public class LoanApplicationForm extends AppCompatActivity {
         Toast.makeText(this, dueDate, Toast.LENGTH_LONG).show();
         return dueDate;
     }
+
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;}
 }
 
 

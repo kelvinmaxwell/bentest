@@ -158,7 +158,7 @@ loanstxt=findViewById(R.id.loans);
 
                                                     JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
                                                     Members.add(jsonChildNode.getString("memberid")+" "+jsonChildNode.getString("name"));
-                                                    memidno = jsonChildNode.getString("memberid");
+
 
                                                 }
 
@@ -169,6 +169,9 @@ loanstxt=findViewById(R.id.loans);
                                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                         String name=parent.getItemAtPosition(position).toString();
                                                         Toast.makeText(MainActivity.this, name, Toast.LENGTH_SHORT).show();
+
+                                                        memidno = name.split(" ")[0];
+
                                                         SessionManager sessionManager=new SessionManager(getApplicationContext());
 
                                                         sessionManager.createSession(name,name,name,name);

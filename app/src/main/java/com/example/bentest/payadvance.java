@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -92,6 +93,13 @@ Button back;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payadvance);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 chooseaccounts=findViewById(R.id.chooseaccountspn);
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
@@ -554,6 +562,7 @@ if(datediff<=rpaymentperiod){
                             AlertDialog.Builder builder = new AlertDialog.Builder(this);
                             builder.setMessage("You have no balances !")
                                     .setNegativeButton("Cancel",null).create().show();
+                            completepayment(jsonChildNode.getString("type_id"));
                         }
                     }
 
@@ -745,11 +754,11 @@ Double intrest=0.1*initialamount;
                     "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
                     SelectedModeOfDisbursement + "','','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid2.getText().toString() + "','Active','Pending')";
 
-            String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE'" ;
+            String sql2="update transactions set `action`='paid' where   `transactionoption`='ADVANCE' and `type_id`='"+advanceid2.getText().toString()+"'" ;
             HashMap postData = new HashMap();
             postData.put("function", "transactions");
-            postData.put("sql1", sql1);
-            postData.put("sql2", sql2);
+            postData.put("sql1", sql2);
+            postData.put("sql2", sql1);
             excecutingcategory="savepayadvance";
 
             PostResponseAsyncTask loginTask =
@@ -757,9 +766,9 @@ Double intrest=0.1*initialamount;
                             payadvance.this);
             loginTask.execute(getString(R.string.url));
 
-        }else {
+        }else if(SelectedModeOfDisbursement.equals("MPESA") || SelectedModeOfDisbursement.equals("CHEQUE")) {
 
-            if(m_Text.isEmpty()) {
+
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Transaction Number");
@@ -774,65 +783,91 @@ Double intrest=0.1*initialamount;
                         m_Text = input.getText().toString();
 
                         StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                                "`transactionnumber`,`transactiontype`,``transactionoption`,repaymentperiod`,`next_repayment`,`amount`,`type_id`,`status`,`Action`)" +
+                                "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`next_repayment`,`amount`,`type_id`,`status`,`Action`)" +
                                 "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
                                 SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid2.getText().toString() + "','Active','pending')";
 
 
-                        String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE' AND `account`='"+chooseaccounts.getSelectedItem().toString()+"' ";
+                        String sql2="update transactions set `action`='paid' where `type_id`='"+advanceid2.getText().toString()+"'  and `transactionoption`='ADVANCE'  ";
                         HashMap postData = new HashMap();
                         postData.put("function", "transactions");
-                        postData.put("sql1", StringPassed);
-                        postData.put("sql2", sql2);
+                        postData.put("sql1", sql2);
+                        postData.put("sql2", StringPassed);
                         excecutingcategory="savepayadvance";
 
                         PostResponseAsyncTask loginTask =
                                 new PostResponseAsyncTask(payadvance.this, postData,
                                         payadvance.this);
                         loginTask.execute(getString(R.string.url));
+                        m_Text=null;
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         m_Text = input.getText().toString();
+
                         dialog.cancel();
+
+
+
                     }
                 });
 
                 builder.show();
 
-            }else{
 
-
-                Calendar cal = Calendar.getInstance();
-                cal.add(Calendar.MONTH, 1);
-
-
-
-                StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                        "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`next_repayment`,`amount`,`type_id`,`status`,`Action`)" +
-                        "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
-                        SelectedModeOfDisbursement + "','" + m_Text + "','PAYMENTS','ADVANCE','','"+adddates(1)+"','" + savingamount.getText() + "','" + advanceid2.getText().toString() + "','Active','Pending')";
-                String sql2="update transactions set `action`='paid' where next_repayment<='"+currentDateandTime+"' and `transactiontype`='PAYMENTS' and `transactionoption`='ADVANCE' and account='"+chooseaccounts.getSelectedItem().toString()+"'" ;
-                HashMap postData = new HashMap();
-                postData.put("function", "transactions");
-                postData.put("sql1", StringPassed);
-                postData.put("sql2", sql2);
-
-                excecutingcategory="savepayadvance";
-
-                PostResponseAsyncTask loginTask =
-                        new PostResponseAsyncTask(payadvance.this, postData,
-                                payadvance.this);
-                loginTask.execute(getString(R.string.url));
-
-            }
 
         }
 
 
+    }
+    public void     completepayment(final String Advanceid){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //  Log.d(TAG,response);
+                System.out.println(response);
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error while reading nertwork", Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+
+
+
+                String sql="update transactions set `status`='closed',`action`='closed' where  (`transactiontype`='PAYMENTS' or `transactiontype`='BORROW')AND `type_id`='"+Advanceid+"' and `transactionoption`='ADVANCE' and account='"+chooseaccounts.getSelectedItem().toString()+"' AND  `memberid`='"+Selectedmember+"'" ;
+
+
+
+                params.put("function", "insert");
+                params.put("sql",sql);
+
+
+
+                return params;
+            }
+        };
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
+        finish();
+        startActivity(getIntent());
+        Toast.makeText(this, Advanceid, Toast.LENGTH_SHORT).show();
+
 
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;}
+
 
 }

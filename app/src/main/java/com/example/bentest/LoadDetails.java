@@ -23,6 +23,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
@@ -76,6 +79,7 @@ EditText nextpaymentdate,Member,Loan_ID,Loan_Amount,Outstanding_Amount;
        Amount_paid=view.findViewById(R.id.Amount_repaid);
        submitloanetails=view.findViewById(R.id.submitloanpayment);
         nextpaymentdate= view.findViewById(R.id.next_repayemnt);
+
 
 
      SessionManager   sessionManager=new SessionManager(getContext());
@@ -134,22 +138,41 @@ public void getloanbalances(){
                          itialloan=jsonChildNode.getDouble("totalloan");
                          outstandingloan=jsonChildNode.getDouble("loanbalance");
                             datediffrence=jsonChildNode.getDouble("DateDiff");
-                                repaymentperiod= jsonChildNode.getDouble("repaymentperiod");
+                                repaymentperiod= jsonChildNode.getDouble("repaymentperiod")/12;
 
 
                                 Loan_ID.setText(jsonChildNode.getString("loanid"));
+
+
+
+
+                        Double totalintrests = repaymentperiod*Math.round(0.1*itialloan);
+                        Double amountpayablemonthly=Math.round(totalintrests)/repaymentperiod;
+
+                        Double amountremnaing=outstandingloan+totalintrests;
+                        //Toast.makeText(getContext(), String.valueOf(amountremnaing), Toast.LENGTH_SHORT).show();
+                        if(amountremnaing<=0){
+                            String id =Member.getText().toString().split(" ")[0];
+                            completepayment(id);
+                        }
+
+
+
+
+
+
 
                         SpannableString content = new SpannableString("KES "+new DecimalFormat("#,###.##").
                                 format(jsonChildNode.getDouble("totalloan")));
                         content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
                         Loan_Amount.setText(content);
 
-                                      //  Loan_Amount.setText(jsonChildNode.getString("totalloan"));
-                                    Double outstanding= jsonChildNode.getDouble("loanbalance")+(0.1*repaymentperiod*itialloan);
+                                       Loan_Amount.setText(jsonChildNode.getString("totalloan"));
+                                    Double outstanding= jsonChildNode.getDouble("loanbalance")+Math.round((0.1*(repaymentperiod)*itialloan));
 
                                     Outstanding_Amount.setText(String.valueOf(outstanding));
 
-                                     New_Outstanding.setText(jsonChildNode.getString(String.valueOf(outstanding)));
+
 
                                     col1=jsonChildNode.getString("col1");
                                      val1=jsonChildNode.getString("val1");
@@ -176,16 +199,16 @@ public void getloanbalances(){
         @Override
         protected Map<String, String> getParams() throws AuthFailureError {
             Map<String, String> params = new HashMap<String, String>();
-            char id =Member.getText().toString().charAt(0);
+            String id =Member.getText().toString().split(" ")[0];
 
-            String sql="SELECT `loanid`,`guarantor`,`repaymentperiod`,`col1`,`val1`,`col2`,`val2`,`col3`,`val3` ,Ifnull( (sum( if( `transactiontype` = 'Loan' and  `memberid`='"+memidno+"' AND transactionoption='Borrow'  and  `Active`='active',(amount), 0 ) )\n" +
-                    "                    - sum( if(  `transactiontype` = 'Loan' AND transactionoption='Payment' and  `memberid`='"+memidno+"' and `Active`='active',(amount), 0 ) ) )  ,0)    AS `loanbalance`,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `loans` where    `memberid`='"+memidno+"' and `Active`='active' and `transactiontype`='Loan' " +
-                    "and `transactionoption`='Borrow' ORDER BY ref ASC LIMIT 1),0) AS DateDiff,Ifnull( (sum( if( `transactiontype` = 'Loan'AND transactionoption='Borrow' and   `memberid`='"+memidno+"' and `Active`='active' ,(amount), 0 ) )),0) \n" +
-                    "                      AS `totalloan` FROM `loans` WHERE    `memberid`='"+memidno+"' ORDER BY ref DESC LIMIT 1";
-
-
+            String sql="SELECT `loanid`,`guarantor`,`repaymentperiod`,`col1`,`val1`,`col2`,`val2`,`col3`,`val3` ,Ifnull( (sum( if( `transactiontype` = 'Loan' and  `memberid`='"+id+"' AND transactionoption='Borrow'  and  `status`='waiting',(amount), 0 ) )\n" +
+                    "                    - sum( if(  `transactiontype` = 'Loan' AND transactionoption='Payment' and  `memberid`='"+id+"' and `status`='waiting',(amount), 0 ) ) )  ,0)    AS `loanbalance`,ifnull((SELECT TIMESTAMPDIFF(month, `date`, NOW()) from `loans` where    `memberid`='"+memidno+"' and `status`='waiting' and `transactiontype`='Loan' " +
+                    "and `transactionoption`='Borrow' ORDER BY ref ASC LIMIT 1),0) AS DateDiff,Ifnull( (sum( if( `transactiontype` = 'Loan'AND transactionoption='Borrow' and   `memberid`='"+id+"' and `status`='waiting' ,(amount), 0 ) )),0) \n" +
+                    "                      AS `totalloan` FROM `loans` WHERE    `memberid`='"+id+"'  and `status`='waiting'";
 
 
+
+System.out.println(sql);
 
             params.put("function", "getresult");
             params.put("sql",sql);
@@ -222,12 +245,12 @@ System.out.println(response);
           protected Map<String, String> getParams() throws AuthFailureError {
               Map<String, String> params = new HashMap<String, String>();
 
-              char id =Member.getText().toString().charAt(0);
+              String id =Member.getText().toString().split(" ")[0];
 
 
-              String sql1= "update loans set status= 'paid' where `loanid`='"+Loan_ID.getText().toString()+"' and `memberid`='"+memidno+"' ;" ;
-              String sql2="insert into loans(`account`,`amount`,`loanid`,`memberid`,`transactionoption`,`transactiontype`,`next_payment`,`repayment`,`status`,`guarantor`) VALUES('Savings','"+Amount_paid.getText().toString()+"','"+Loan_ID.getText().toString()+"','"+memidno+"'" +
-                      ",'Payment','Loan','"+nextpaymentdate.getText().toString()+"','"+getcurrentdate()+"','waiting','"+guarantor+"')" ;
+              String sql1= "update loans set `Active`='paid'  where `loanid`='"+Loan_ID.getText().toString()+"' and `memberid`='"+id+"' ;" ;
+              String sql2="insert into loans(`account`,`amount`,`loanid`,`memberid`,`transactionoption`,`transactiontype`,`next_payment`,`repayment`,`status`,`Active`,`guarantor`) VALUES('EDUCATION','"+Amount_paid.getText().toString()+"','"+Loan_ID.getText().toString()+"','"+id+"'" +
+                      ",'Payment','Loan','"+nextpaymentdate.getText().toString()+"','"+getcurrentdate()+"','waiting','pending','"+guarantor+"')" ;
 
 
               System.out.println("maxi"+sql1+sql2);
@@ -251,18 +274,29 @@ getloanbalances();
   }
 
   public void submitloanspayment(){
+        nextpaymentdate.setFocusable(false);
+      nextpaymentdate.setClickable(true);
 
         submitloanetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+if(repaymentperiod!=null){
+
                 Toast.makeText(getContext(), String.valueOf(repaymentperiod) +String.valueOf(datediffrence), Toast.LENGTH_SHORT).show();
-              Double totalintrests = repaymentperiod*0.1*itialloan;
-              Double amountpayablemonthly=totalintrests/repaymentperiod;
-              Double amountremnaing=outstandingloan+totalintrests;
-                Double paymentmade=Double.parseDouble(Amount_paid.getText().toString());
+                Double totalintrests = (repaymentperiod)*Math.round(0.1*itialloan);
+               // Double amountpayablemonthly=Math.round(totalintrests)/repaymentperiod;
+                Double amount=(totalintrests)+(itialloan);
+    Double amountpayablemonthly=amount/(repaymentperiod*12);
+                Double amountremnaing=outstandingloan+totalintrests;
+
                 if(amountremnaing>0) {
+
+                    if(!Amount_paid.getText().toString().isEmpty()&& !nextpaymentdate.getText().toString().isEmpty() ){
+                        Double paymentmade=Double.parseDouble(Amount_paid.getText().toString());
+
                     if (paymentmade < amountpayablemonthly) {
-                        builder("The minimum you can pay is" + amountpayablemonthly);
+                        builder("The minimum you can pay is" + Math.round(amountpayablemonthly));
                     } else if (paymentmade > amountremnaing) {
                         builder("The maximum payable is " + amountremnaing);
                     } else if (repaymentperiod <= datediffrence && paymentmade < amountremnaing) {
@@ -271,14 +305,28 @@ getloanbalances();
                     else{
                         updatebalances();
                     }
+
+                    }
+                    else if(Amount_paid.getText().toString().isEmpty() || nextpaymentdate.getText().toString().isEmpty()){
+                        builder("please check dates or amount paybale fields");
+                    }
+
                 }
                 else{
                     builder("you have no loan balances");
+                    String id =Member.getText().toString().split(" ")[0];
+                    completepayment(id);
                 }
 
                 Toast.makeText(getContext(), String.valueOf(itialloan), Toast.LENGTH_SHORT).show();
 
             }
+
+            else{
+
+                builder("You have no record of loan transactions");
+}}
+
         });
   }
 
@@ -360,6 +408,48 @@ public String getcurrentdate(){
                 .setNegativeButton("Cancel",null).create().show();
     }
 
+
+
+    public void     completepayment(final String memberid){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST,getString(R.string.url), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //  Log.d(TAG,response);
+                System.out.println(response);
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "Error while reading nertwork", Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+
+
+
+
+                String sql="update loans set `status`='closed',`Active`='closed' where  (`transactionoption`='Borrow' or `transactionoption`='Payment' or  `transactionoption`='Fines')AND `loanId`='"+Loan_ID.getText().toString()+"'  AND  `memberid`='"+memberid+"'" ;
+
+
+               System.out.println(sql);
+                params.put("function", "insert");
+                params.put("sql",sql);
+
+
+
+                return params;
+            }
+        };
+        MySingleton.getInstance(getContext()).addToRequestQueue(stringRequest);
+        Toast.makeText(getContext(), memberid + Loan_ID.getText().toString(), Toast.LENGTH_SHORT).show();
+
+
+    }
 
 
 

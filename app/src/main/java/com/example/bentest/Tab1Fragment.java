@@ -53,6 +53,7 @@ public class Tab1Fragment extends Fragment {
     static String groupid = "";
     static String memidno = "";
     static String account = "";
+    static String Selectedmember = "";
     static EditText etamount;
     static Spinner Spinner;
     static Spinner Spinner2;
@@ -94,6 +95,9 @@ loanid=view.findViewById(R.id.loanid);
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+
+                Selectedmember = parent.getItemAtPosition(position).toString().split(" ")[0];
                 Response.Listener<String> responseListener1 = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -219,7 +223,7 @@ loanid=view.findViewById(R.id.loanid);
         Spinner2 = (Spinner) view.findViewById(R.id.Spinner2);
         String[] String = new String[]{
                 "Select Account",
-                "SAVINGS",
+//                "SAVINGS",
                 "EDUCATION"
         };
 
@@ -274,19 +278,29 @@ if(position>0){
                                     for (int i = 0; i < jsonMainNode.length(); i++) {
 
                                         JSONObject jsonChildNode = jsonMainNode.getJSONObject(i);
+                                        Double amountavailable=jsonChildNode.getDouble("totalsavings")*3-jsonChildNode.getDouble("totalloans");
                                         loanid.setText(jsonChildNode.getString("loan_id"));
                                         Members.add(jsonChildNode.getString("totalsavings"));
-                                        etamount.setFilters(new InputFilter[]{ new MinMaxFilter("1", Integer.toString(jsonChildNode.getInt("totalsavings")*3))});
-                                        Double amountavailable=jsonChildNode.getDouble("totalsavings")*3-jsonChildNode.getDouble("totalloans");
+
+
+                                        Toast.makeText(getContext(), Double.toString(amountavailable), Toast.LENGTH_SHORT).show();
                                         if(amountavailable>0) {
                                             textView.setText("Available: KES " +
                                                     new DecimalFormat("#,###.##").
                                                             format(amountavailable));
+
+
                                         }
                                         else if(amountavailable<=0 ){
-                                            bbulder("You are not qualified");
+                                            bbulder("You are not qualified please make savings!");
                                         }
+                                      int k= (int)Math.round(amountavailable);
+                                        etamount.setFilters(new InputFilter[]{ new MinMaxFilter("1", java.lang.String.valueOf(k))});
+
+
+
                                     }
+
 
                                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, Members);
                                     autoCompleteTextView.setAdapter(adapter);
@@ -327,8 +341,7 @@ if(position>0){
 
 
         Spinner3 = (Spinner) view.findViewById(R.id.Spinner3);
-        String = new String[]{"Repayment Period (months)", "1", "2", "3","4","5","6" ,"7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34"
-,"35","36"
+        String = new String[]{"Repayment Period (Years)", "1", "2", "3"
         };
 
         List<String> plantsList3 = new ArrayList<>(Arrays.asList(String));

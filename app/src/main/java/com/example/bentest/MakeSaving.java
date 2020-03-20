@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -80,6 +81,11 @@ Button back;
 
 chooseaccounts=findViewById(R.id.chooseaccountspn);
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         Spinnerdisbursementmode = (android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
         back=findViewById(R.id.backbtn);
 accountselectspinner();
@@ -458,9 +464,9 @@ backpress();
                         m_Text = input.getText().toString();
 
                         StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                                "`transactionnumber`,`transactiontype`,`amount`)" +
+                                "`transactionnumber`,`transactiontype`,`transactionoption`,`amount`)" +
                                 "VALUES('"+Selectedmember+"','"+currentDateandTime+"','"+chooseaccounts.getSelectedItem().toString()+"','"+SelectedModeOfDisbursement+"'," +
-                                "'"+ m_Text +"','"+chooseaccounts.getSelectedItem().toString()+"','"+savingamount.getText()+"')";
+                                "'"+ m_Text +"','SAVINGS','SAVINGS','"+savingamount.getText()+"')";
 
 
                         HashMap postData = new HashMap();
@@ -487,9 +493,9 @@ backpress();
             }else{
 
                 StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                        "`transactionnumber`,`transactiontype`,`amount`)" +
+                        "`transactionnumber`,`transactiontype`,`transactionoption`,`amount`)" +
                         "VALUES('"+Selectedmember+"','"+currentDateandTime+"','"+chooseaccounts.getSelectedItem().toString()+"','"+SelectedModeOfDisbursement+"'," +
-                        "'"+ m_Text +"','"+chooseaccounts.getSelectedItem().toString()+"','"+savingamount.getText()+"')";
+                        "'"+ m_Text +"','SAVINGS','SAVINGS','"+savingamount.getText()+"')";
 
 
                 HashMap postData = new HashMap();
@@ -634,5 +640,9 @@ backpress();
             }
         });
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;}
 
 }

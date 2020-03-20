@@ -14,30 +14,23 @@
         android:theme="@style/ThemeOverlay.AppCompat"
         tools:ignore="MissingConstraints">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar2"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Widget.AppCompat.PopupWindow"
-            app:title="hghg" />
+
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/layouth"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
-        android:theme="@style/Widget.AppCompat.PopupWindow"
-        tools:ignore="MissingConstraints">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/Widget.AppCompat.PopupWindow"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="PAY ADVANCE" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -217,38 +210,32 @@
     <Button
 
         android:id="@+id/button"
-        android:layout_width="162dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_width="139dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/buttoncolour"
         android:drawableLeft="@drawable/processloan"
         android:onClick="PayAdvance"
         android:text="Process"
-        android:background="@color/buttoncolour"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:theme="@style/Button1Style"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/backbtn"
         app:layout_constraintTop_toBottomOf="@+id/Spinnerdisbursementmode" />
 
     <Button
 
         android:id="@+id/backbtn"
-        android:layout_width="162dp"
-        android:layout_height="51dp"
+        android:layout_width="144dp"
+        android:layout_height="52dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="32dp"
-        android:layout_marginRight="32dp"
+        android:background="@color/buttoncolour"
         android:drawableLeft="@drawable/undo"
         android:text="Back"
-        android:background="@color/buttoncolour"
         android:textColor="@android:color/white"
         android:theme="@style/Button2Style"
         app:layout_constraintEnd_toStartOf="@+id/button"

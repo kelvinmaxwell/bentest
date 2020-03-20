@@ -108,6 +108,10 @@ public  EditText advanceid;
 
         AmountRequested= (EditText) findViewById(R.id.AmountRequested);
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         Spinner = (android.widget.Spinner) findViewById(R.id.spinner);
         Spinnerdisbursementmode=(android.widget.Spinner) findViewById(R.id.Spinnerdisbursementmode);
 
@@ -373,7 +377,7 @@ backpress();
 
 
                 StringPassed = "SELECT IF((select count(memberid) from loans where memberid='"+Selectedmember+"' and " +
-                        "                        transactionoption='BORROW' AND status='waiting') >0,(select COUNT(ref) from loans where " +
+                        "                        transactionoption='BORROW' AND status='Active') >0,(select COUNT(ref) from loans where " +
                         "                        transactionoption='PAYMENT' AND status='waiting'),-1 ) AS `no`,Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
                         "                            YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND" +
                         "                             `transactionoption`='ADVANCE' " +
@@ -564,9 +568,9 @@ backpress();
         }else if(SelectedModeOfDisbursement.equals("CASH")){
 
             StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                    "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`amount`,`status`,`type_id`)" +
+                    "`transactionnumber`,`transactiontype`,`transactionoption`,`repaymentperiod`,`amount`,`status`,`type_id`,`action`)" +
                     "VALUES('"  +Selectedmember+ "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
-                    SelectedModeOfDisbursement + "','','BORROW','ADVANCE','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active','"+advanceid.getText().toString()+"')";
+                    SelectedModeOfDisbursement + "','','BORROW','ADVANCE','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active','"+advanceid.getText().toString()+"','pending')";
 
             HashMap postData = new HashMap();
             postData.put("function", "action");
@@ -595,9 +599,9 @@ backpress();
                         m_Text = input.getText().toString();
 
                         StringPassed = "insert into `transactions`(`memberid`,`date`,`account`,`paymentmode`," +
-                                "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`,`status`,`type_id`)" +
+                                "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`,`status`,`type_id`,`action`,`transactionoption`)" +
                                 "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
-                                SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active','"+advanceid.getText().toString()+"')";
+                                SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active','"+advanceid.getText().toString()+"','pending','ADVANCE')";
 
                         HashMap postData = new HashMap();
                         postData.put("function", "action");
@@ -623,9 +627,9 @@ backpress();
             }else{
 
                 StringPassed = "insert into `advances`(`memberid`,`date`,`account`,`paymentmode`," +
-                        "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`,`status`,`type_id`)" +
+                        "`transactionnumber`,`transactiontype`,`repaymentperiod`,`amount`,`status`,`type_id`,`action`,`transactionoption`)" +
                         "VALUES('" + Selectedmember + "','" + currentDateandTime + "','"+chooseaccounts.getSelectedItem().toString()+"','" +
-                        SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active','"+advanceid.getText().toString()+"')";
+                        SelectedModeOfDisbursement + "','" + m_Text + "','BORROW','"+repaymentperiod+"','" + AmountRequested.getText() + "','Active','"+advanceid.getText().toString()+"','pending','ADVANCE')";
 
                 HashMap postData = new HashMap();
                 postData.put("function", "action");
@@ -717,8 +721,8 @@ bbulder("Your not qualified for an advance because you have an existing loan. Pl
                                 "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='" + Selectedmember + "') AS `totalsavings`," +
                                 "                                    IFNULL(((SELECT (SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0)))" +
                                 "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='" + Selectedmember + "') *2)- " +
-                                "                                    ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
-                                "                       (SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' " +
+                                "                                    ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS' and `status`='Active' and `memberid`='"+Selectedmember+"',(amount), 0)))-" +
+                                "                       (SUM(IF(`transactiontype` = 'BORROW' and  `status`='Active' and `memberid`='"+Selectedmember+"',(amount), 0))),0) FROM transactions WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' " +
                                 "                                    AND memberid='" + Selectedmember + "')),0) AS availableforfortakingadvance,     Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
                                 "YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) ) )  ,0) as topupamounts ," +
                                 " IF((select `type_id` from transactions where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1)is not null,(select `type_id` from transactions   where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),ifnull( (select CONCAT(ref+1,'/', YEAR(CURDATE()),'/','"+Selectedmember+"','Adv') from transactions\n" +
@@ -809,12 +813,12 @@ bbulder("Your not qualified for an advance because you have an existing loan. Pl
                             "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='" + Selectedmember + "') AS `totalsavings`," +
                             "                                    IFNULL(((SELECT (SUM(IF(transactions.`transactiontype` = 'SAVINGS',(transactions.amount), 0)))" +
                             "                                    FROM transactions WHERE transactions.`account`='" + chooseaccounts.getSelectedItem().toString() + "' AND memberid='" + Selectedmember + "') *2)- " +
-                            "                                    ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS',(amount), 0)))-" +
-                            "                       (SUM(IF(`transactiontype` = 'BORROW',(amount), 0))),0) FROM transactions WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' " +
+                            "                                    ABS((SELECT IFNULL((SUM(IF(`transactiontype` = 'PAYMENTS' and `status`='waiting' and `memberid`='"+Selectedmember+"',(amount), 0)))-" +
+                            "                       (SUM(IF(`transactiontype` = 'BORROW' and  `status`='waiting' and `memberid`='"+Selectedmember+"',(amount), 0))),0) FROM transactions WHERE `account`='" + chooseaccounts.getSelectedItem().toString() + "' " +
                             "                                    AND memberid='" + Selectedmember + "')),0) AS availableforfortakingadvance,     Ifnull((sum( if(  transactions.`transactiontype` = 'SAVINGS' AND YEAR(transactions.date) =" +
                             "YEAR(CURRENT_DATE - INTERVAL 1 MONTH) AND MONTH(transactions.date) = MONTH(CURRENT_DATE - INTERVAL 1 MONTH) ,(transactions.amount),0))*2- sum( if(  `transactiontype` = 'BORROW' AND `transactionoption`='ADVANCE' and status='Active',(amount), 0 ) ) )  ,0) as topupamounts ," +
-                            " IF((select `type_id` from transactions where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1) is not null,(select `type_id` from transactions   where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),ifnull( (select CONCAT(`ref`+1,'/', YEAR(CURDATE()),'/','"+Selectedmember+"','Adv') from transactions\n" +
-                            "                                 where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' ORDER by ref DESC LIMIT 1),CONCAT(sum(0+1),'/', YEAR(CURDATE()),'/','1','Adv')))as advanceid FROM `transactions` ;" ;
+                            " IF((select `type_id` from transactions where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1)is not null,(select `type_id` from transactions   where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' and `status`='Active' and `memberid`='"+Selectedmember+"' ORDER by ref ASC LIMIT 1),ifnull( (select CONCAT(ref+1,'/', YEAR(CURDATE()),'/','"+Selectedmember+"','Adv') from transactions\n" +
+                            "                                 where `transactiontype`='BORROW' AND `transactionoption`='ADVANCE' ORDER by ref DESC LIMIT 1),CONCAT(sum(0+1),'/', YEAR(CURDATE()),'/','1','Adv')))as advanceid  from `transactions`";
 
                     HashMap postData = new HashMap();
                     postData.put("function", "query");
@@ -937,6 +941,10 @@ bbulder("Your not qualified for an advance because you have an existing loan. Pl
 
 
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;}
 
 
 }

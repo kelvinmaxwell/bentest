@@ -30,10 +30,15 @@ import static com.example.bentest.Tab1Fragment.etamount;
 import static com.example.bentest.Tab2Fragment.guarontorid;
 import static com.example.bentest.Tab2Fragment.idno;
 import static com.example.bentest.Tab1Fragment.loanid;
+import static com.example.bentest.Tab1Fragment.Spinner3;
+import static com.example.bentest.Tab2Fragment.selectedmembergarontor;
+
+
 
 
 public class Tab3Fragment extends Fragment {
     private static final String TAG = "Tab3Fragment";
+    String garantor;
     EditText col1,col2,col3,val1,val2,val3;
     Button process;
     ViewPager viewPager;
@@ -67,16 +72,10 @@ public class Tab3Fragment extends Fragment {
             public void onClick(View v) {
                 if(col1.getText().toString().equalsIgnoreCase("") || val1.getText().toString().equalsIgnoreCase("")){
 
-                  bbulder("column one has empty fields");
+                  bbulder("column one has empty fields ,fill one column atleast");
 
                 }
-                else if(col2.getText().toString().equalsIgnoreCase("")|| val2.getText().toString().equalsIgnoreCase("")){
-                    bbulder("column two has empty fields");
 
-                }
-                else if(col3.getText().toString().equalsIgnoreCase("") ||val3.getText().toString().equalsIgnoreCase("")){
-
-                bbulder("column three has empty fields");}
 else{
                 Response.Listener<String> responseListener1 = new Response.Listener<String>() {
                     @Override
@@ -96,12 +95,12 @@ else{
                                 etamount.setText("");
                                 autoCompleteTextView.setText("");
                                 etamount.setText("");
-                                col1.setText("");
-                                val1.setText("");
-                                col2.setText("");
-                                val2.setText("");
-                                col3.setText("");
-                                val3.setText("");
+                                col1.setText("0");
+                                val1.setText("0");
+                                col2.setText("0");
+                                val2.setText("0");
+                                col3.setText("0");
+                                val3.setText("0");
                                 Tab2Fragment.autoCompleteTextView.setText("");
                                 Tab2Fragment.balance.setText("");
                                 Tab2Fragment.idno.setText("");
@@ -121,8 +120,8 @@ else{
 
                 String account = null;
                 String sql = "INSERT INTO `seskenya`.`loans` " +
-                        "(`Memberid`, `guarantor`, `transactiontype`,`transactionoption`, `account`,`loanId`, `col1`, `val1`,`col2`, `val2`,`col3`, `val3`, `amount`,`next_payment`,`repayment`,`status`)" +
-                        " VALUES ('"+memid+"', '"+guarontorid+"', 'Loan','Borrow', '"+account+"','"+loanid.getText().toString()+"', '"+col1.getText().toString()+"', '"+val1.getText().toString()+"', '"+col2.getText().toString()+"', '"+val2.getText().toString()+"', '"+col3.getText().toString()+"', '"+val3.getText().toString()+"','"+ etamount.getText().toString()+"','"+((LoanApplicationForm)getActivity()).adddates(1)+"','"+((LoanApplicationForm)getActivity()).adddates(0)+"','waiting');";
+                        "(`Memberid`, `guarantor`, `transactiontype`,`transactionoption`, `account`,`loanId`, `col1`, `val1`,`col2`, `val2`,`col3`, `val3`, `amount`,`next_payment`,`repayment`,`status`,`repaymentperiod`,`Active`)" +
+                        " VALUES ('"+memid+"', '"+selectedmembergarontor+"', 'Loan','Borrow', 'EDUCATION','"+loanid.getText().toString()+"', '"+col1.getText().toString()+"', '"+val1.getText().toString()+"', '"+col2.getText().toString()+"', '"+val2.getText().toString()+"', '"+col3.getText().toString()+"', '"+val3.getText().toString()+"','"+ etamount.getText().toString()+"','"+((LoanApplicationForm)getActivity()).adddates(1)+"','"+((LoanApplicationForm)getActivity()).adddates(0)+"','waiting','"+Integer.parseInt(Spinner3.getSelectedItem().toString())*12+"','pending');";
                 String function = "action";
                 ActionRequest driverLoginRequest = new ActionRequest("dbqueries.php", function, sql, responseListener1);
                 RequestQueue requestQueue = Volley.newRequestQueue(getContext());

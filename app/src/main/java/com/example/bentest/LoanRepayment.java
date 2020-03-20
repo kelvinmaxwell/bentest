@@ -40,7 +40,7 @@ public class LoanRepayment extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         viewPager = (ViewPager) findViewById(R.id.container);
         setupViewPager(viewPager);
 
@@ -95,4 +95,8 @@ public class LoanRepayment extends AppCompatActivity {
         }
 
     }
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;}
 }

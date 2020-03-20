@@ -1,15 +1,21 @@
 package com.example.bentest;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -28,6 +34,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,10 +44,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class members extends AppCompatActivity {
+public class members extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private Toolbar toolbar;
     public EditText Totalmembers,savingss,loans_savings,advances_savings,loans_edu,advances_edu;
     PieChart pieChart;
     PieData pieData;
+    DrawerLayout mdrawerLayout;
     PieDataSet pieDataSet;
     ArrayList pieEntries;
     ArrayList PieEntryLabels;
@@ -223,6 +232,58 @@ public class members extends AppCompatActivity {
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(stringRequest);
 
 
+
+    }
+
+
+    public void drawable(){
+        ActionBarDrawerToggle darwertoggle=new ActionBarDrawerToggle(this,mdrawerLayout,toolbar,R.string.drawer_open,R.string.drawer_close);
+        mdrawerLayout.addDrawerListener(darwertoggle);
+        darwertoggle.syncState();
+        NavigationView nav_view=findViewById(R.id.nav_view);
+        nav_view.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+
+
+            int id = menuItem.getItemId();
+
+            if (id == R.id.nav_groups) {
+                Intent i=new Intent(getApplicationContext(),groups.class);
+                startActivity(i);
+            } else if (id == R.id.nav_members) {
+                Intent i=new Intent(getApplicationContext(),members.class);
+                startActivity(i);
+            } else if (id == R.id.nav_rates) {
+                Intent i=new Intent(getApplicationContext(),rates.class);
+                startActivity(i);
+            } else if (id == R.id.nav_employees) {
+
+            }else if (id == R.id.nav_regions) {
+
+            }else if (id == R.id.nav_gallery) {
+
+            }else if (id == R.id.nav_reports) {
+
+            } else if (id == R.id.nav_share) {
+
+            } else if (id == R.id.nav_send) {
+
+            }
+
+
+        mdrawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(mdrawerLayout.isDrawerOpen(GravityCompat.START)){
+            mdrawerLayout.closeDrawer(GravityCompat.START);
+        } else{
+            super.onBackPressed();}
 
     }
 
